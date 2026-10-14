@@ -271,16 +271,16 @@ Não é necessário instalar Python, Node.js ou dependências de backend para ex
 
 ### 6.2. Baixando o projeto
 
-Clone o repositório, substituindo `USUARIO` pelo nome de usuário do GitHub e `REPOSITORIO` pelo nome do repositório:
+Clone o repositório utilizando o seguinte comando no terminal:
 
 ```bash
-git clone https://github.com/USUARIO/REPOSITORIO.git
+git clone https://github.com/MonnikLuianne/simulador-de-algoritmo-genetico.git
 ```
 
 Entre na pasta do projeto:
 
 ```bash
-cd REPOSITORIO
+cd simulador-de-algoritmo-genetico
 ```
 
 ### 6.3. Executando no Visual Studio Code
@@ -325,9 +325,9 @@ Para publicar:
 
 Após a publicação, teste os controles, os campos e a execução do algoritmo diretamente pelo link público.
 
-**Link do repositório:** `INSIRA_AQUI_O_LINK_DO_REPOSITORIO`
+**Link do repositório:** `https://github.com/MonnikLuianne/simulador-de-algoritmo-genetico`
 
-**Link da aplicação publicada:** `INSIRA_AQUI_O_LINK_DO_GITHUB_PAGES`
+**Link da aplicação publicada:** `https://monnikluianne.github.io/simulador-de-algoritmo-genetico/`
 
 ## 8. Testes e validação
 
