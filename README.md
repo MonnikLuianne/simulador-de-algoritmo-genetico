@@ -378,7 +378,7 @@ Os resultados específicos dos testes devem ser registrados conforme as execuç�
 - João Pedro Pereira da Luz
 - Guilherme Ribeiro Nunes Batista
 
-**Professor(a):** Nome do(a) professor(a)
+**Professor(a):** Pedro Almir Martins de Oliveira
 
 ## 11. Considerações finais
 
