@@ -1,64 +1,70 @@
 # Simulador de Algoritmo Genético
 
-Simulador interativo de um algoritmo genético aplicado à seleção de projetos de melhoria de um campus universitário, desenvolvido como atividade prática da disciplina de Inteligência Artificial da Universidade Federal do Piauí (UFPI).
+Simulador interativo de um algoritmo genético aplicado à seleção de projetos de melhoria de um campus universitário. Desenvolvido como atividade prática da disciplina de Inteligência Artificial da Universidade Federal do Piauí (UFPI).
+
+**Repositório:** https://github.com/MonnikLuianne/simulador-de-algoritmo-genetico
+
+**Aplicação publicada:** https://monnikluianne.github.io/simulador-de-algoritmo-genetico/
 
 ## 1. Sobre o projeto
 
-O objetivo do projeto é implementar e visualizar o funcionamento de um **algoritmo genético** para selecionar um conjunto de projetos que maximize o benefício total obtido, respeitando um orçamento disponível.
+O objetivo deste projeto é implementar e visualizar o funcionamento de um **algoritmo genético** aplicado a um problema de otimização com restrição orçamentária.
 
-Cada projeto possui um custo e um benefício. O algoritmo explora diferentes combinações de projetos ao longo de várias gerações, utilizando mecanismos inspirados na evolução natural, como seleção, cruzamento, mutação e elitismo.
+A aplicação busca selecionar um conjunto de projetos que maximize o benefício total obtido, sem ultrapassar o orçamento disponível. Cada projeto possui um custo e um benefício, e sua seleção é representada por um cromossomo binário.
 
-A aplicação permite cadastrar projetos, configurar os parâmetros do algoritmo, acompanhar a evolução das soluções e visualizar a melhor combinação encontrada.
+Ao longo das gerações, o algoritmo utiliza mecanismos inspirados na evolução natural, como seleção por torneio, cruzamento, mutação e elitismo. Além disso, aplica um procedimento de reparo para corrigir soluções que ultrapassem o orçamento.
 
-### Problema de otimização
+A interface permite cadastrar e editar projetos, configurar os parâmetros do algoritmo, acompanhar a evolução das populações e visualizar os resultados da simulação.
 
-O problema consiste em maximizar o benefício total dos projetos selecionados sem ultrapassar o orçamento disponível.
+## 2. Formulação do problema
 
-Matematicamente, o objetivo é:
+O problema consiste em selecionar projetos de forma a maximizar o benefício total, respeitando o orçamento disponível.
 
-**Maximizar:**
+**Função objetivo:**
 
+\[
+\text{Maximizar } B = \sum_{i=1}^{n} b_i x_i
+\]
 
-$$
-\boxed{\text{Maximizar } B = \sum_{i=1}^{n} b_i x_i}
-$$
+**Restrição orçamentária:**
 
-**Sujeito a:**
-
-$$
-\boxed{\sum_{i=1}^{n} c_i x_i \leq O}
-$$
+\[
+\sum_{i=1}^{n} c_i x_i \leq O
+\]
 
 Em que:
 
-- $B$: benefício total dos projetos selecionados.
-- $b_i$: benefício do projeto $i$.
-- $c_i$: custo do projeto $i$.
-- $x_i$: indica se o projeto $i$ foi selecionado ($1$) ou não ($0$).
-- $n$: quantidade total de projetos.
-- $O$: orçamento disponível.
+- \(B\): benefício total dos projetos selecionados.
+- \(b_i\): benefício do projeto \(i\).
+- \(c_i\): custo do projeto \(i\).
+- \(x_i\): variável binária que indica se o projeto \(i\) foi selecionado.
+- \(n\): quantidade de projetos cadastrados.
+- \(O\): orçamento disponível.
 
-Cada variável binária pode assumir os valores:
+Cada variável de decisão pode assumir dois valores:
 
-- `1`: o projeto foi selecionado;
+- `1`: o projeto foi selecionado.
 - `0`: o projeto não foi selecionado.
 
-## 2. Tecnologias utilizadas
+O objetivo do algoritmo é encontrar combinações de projetos com o maior benefício total possível dentro da restrição orçamentária.
 
-- **HTML5:** estrutura da aplicação e dos formulários.
-- **CSS3:** estilização, organização dos painéis e adaptação da interface.
-- **JavaScript (ES Modules):** implementação do algoritmo genético, validações, simulação e atualização dos resultados no navegador.
+## 3. Tecnologias utilizadas
+
+- **HTML5:** estrutura da aplicação.
+- **CSS3:** estilização da interface, dos painéis, dos cromossomos e dos resultados.
+- **JavaScript (ES Modules):** implementação do algoritmo genético, das validações, da simulação e das interações da interface.
+- **SVG:** representação gráfica da evolução dos resultados.
 - **Git e GitHub:** versionamento e hospedagem do código-fonte.
 - **Visual Studio Code:** ambiente de desenvolvimento.
 - **Live Server:** execução local da aplicação durante o desenvolvimento.
-- **GitHub Pages:** opção de publicação da aplicação como página estática.
+- **GitHub Pages:** publicação da aplicação na web.
 
-O projeto funciona inteiramente no navegador, sem necessidade de backend ou banco de dados. O algoritmo genético é implementado em JavaScript, sem depender de bibliotecas externas de otimização.
+O projeto é executado diretamente no navegador, sem necessidade de backend ou banco de dados. O algoritmo genético é implementado em JavaScript, sem dependência de bibliotecas externas de otimização.
 
-## 3. Estrutura do projeto
+## 4. Estrutura do projeto
 
 ```text
-simulador-algoritmo-genetico/
+simulador-de-algoritmo-genetico/
 │
 ├── index.html
 │
@@ -71,65 +77,69 @@ simulador-algoritmo-genetico/
 │   ├── random.js
 │   ├── evaluation.js
 │   ├── repair.js
-│   ├── operators.js
 │   ├── geneticAlgorithm.js
 │   └── simulation.js
 │
 └── README.md
 ```
 
-### Responsabilidade de cada arquivo
+### Responsabilidade dos arquivos
 
 | Arquivo | Responsabilidade |
 |---|---|
-| `index.html` | Define a estrutura da página, os formulários, os controles da simulação e as áreas de resultados. |
-| `css/style.css` | Define o visual da aplicação, os painéis, os campos, os botões e a apresentação dos resultados. |
-| `js/main.js` | Integra a interface às funções do algoritmo, trata as interações do usuário e atualiza os resultados na página. |
-| `js/validation.js` | Valida os parâmetros da simulação e impede a utilização de configurações inválidas. |
-| `js/random.js` | Implementa um gerador pseudoaleatório determinístico a partir de uma semente. |
+| `index.html` | Define a estrutura da página, os formulários, os controles e as áreas de visualização. |
+| `css/style.css` | Define a aparência da aplicação, os painéis, os botões, as animações e a apresentação dos resultados. |
+| `js/main.js` | Integra a interface às funções do algoritmo, gerencia as interações do usuário, apresenta os resultados e controla a animação. |
+| `js/validation.js` | Valida os projetos e os parâmetros da simulação. |
+| `js/random.js` | Implementa um gerador pseudoaleatório baseado em uma semente. |
 | `js/evaluation.js` | Calcula o custo total, o benefício total e a aptidão (*fitness*) de uma solução. |
-| `js/repair.js` | Corrige soluções que ultrapassam o orçamento, removendo projetos conforme a regra de reparo. |
-| `js/operators.js` | Arquivo destinado à organização dos operadores genéticos, caso sejam implementados ou utilizados separadamente. |
-| `js/geneticAlgorithm.js` | Reúne as operações principais do algoritmo genético, incluindo geração inicial, seleção, cruzamento, mutação e formação da nova população. |
-| `js/simulation.js` | Controla o estado da simulação, as gerações, o histórico e a melhor solução acumulada. |
-| `README.md` | Documenta o projeto, sua organização, seu funcionamento e as instruções de execução. |
+| `js/repair.js` | Repara soluções que ultrapassam o orçamento, removendo projetos conforme a regra estabelecida. |
+| `js/geneticAlgorithm.js` | Implementa a geração da população inicial, a seleção por torneio, o cruzamento, a mutação, o elitismo e a formação das novas gerações. |
+| `js/simulation.js` | Gerencia o estado da simulação, as gerações, o histórico e a melhor solução acumulada. |
+| `README.md` | Documenta o projeto, os algoritmos utilizados e as instruções de execução. |
 
-## 4. Funcionalidades implementadas
+## 5. Funcionalidades
 
-### 4.1. Cadastro de projetos
+### 5.1. Cadastro e edição de projetos
 
-A interface permite cadastrar, editar e remover projetos que poderão ser selecionados pelo algoritmo genético.
+A aplicação permite cadastrar, editar e remover projetos que poderão ser selecionados pelo algoritmo genético.
 
-Cada projeto contém:
+Cada projeto possui três informações:
 
 - Nome;
 - Custo;
 - Benefício.
 
-A quantidade de projetos permitida é de 4 a 15.
+A quantidade permitida é de **4 a 15 projetos**.
 
-### 4.2. Configuração da simulação
+As validações dos dados incluem:
+
+- Nome não vazio;
+- Custo maior que zero, com no máximo duas casas decimais;
+- Benefício maior ou igual a zero.
+
+### 5.2. Configuração do algoritmo
 
 O usuário pode configurar os seguintes parâmetros:
 
 | Parâmetro | Descrição |
 |---|---|
 | Orçamento | Valor máximo disponível para selecionar projetos. |
-| Tamanho da população | Quantidade de indivíduos em cada geração. |
-| Número de gerações | Quantidade máxima de gerações a executar. |
-| Taxa de cruzamento | Probabilidade de ocorrer cruzamento entre um par de pais. |
-| Taxa de mutação | Probabilidade de mutação aplicada individualmente a cada gene. |
-| Tamanho do torneio | Quantidade de indivíduos candidatos em cada seleção por torneio. |
-| Indivíduos de elite | Quantidade de melhores indivíduos preservados na geração seguinte. |
-| Semente aleatória | Valor utilizado para reproduzir a sequência pseudoaleatória da execução. |
+| Tamanho da população | Quantidade de indivíduos em cada geração. Deve ser um número inteiro maior ou igual a 2. |
+| Número de gerações | Quantidade de gerações a executar. Deve ser um número inteiro maior ou igual a 1. |
+| Taxa de cruzamento | Probabilidade percentual de ocorrer cruzamento entre um par de pais. |
+| Taxa de mutação | Probabilidade percentual de mutação aplicada individualmente a cada gene. |
+| Tamanho do torneio | Quantidade de candidatos distintos considerados em cada seleção. Deve ser maior ou igual a 2 e não pode superar o tamanho da população. |
+| Indivíduos de elite | Quantidade de melhores indivíduos preservados na geração seguinte, sem modificações. Deve ser menor que o tamanho da população. |
+| Semente aleatória | Valor inteiro utilizado para controlar a sequência pseudoaleatória e possibilitar a reprodução de uma execução. |
 
-A aplicação valida os parâmetros antes de iniciar a simulação.
+As taxas de cruzamento e mutação variam de 0% a 100%. A aplicação valida as configurações antes de iniciar a simulação.
 
-### 4.3. Representação dos indivíduos
+### 5.3. Representação dos indivíduos
 
-Cada indivíduo é representado por um cromossomo binário. Cada gene corresponde a um projeto cadastrado.
+Cada indivíduo é representado por um cromossomo binário. Cada gene corresponde a um projeto cadastrado, mantendo a mesma ordem da lista de projetos.
 
-Por exemplo:
+Por exemplo, para quatro projetos:
 
 ```text
 Cromossomo: 1100
@@ -140,89 +150,125 @@ Projeto C: não selecionado
 Projeto D: não selecionado
 ```
 
+Nesse exemplo, os projetos A e B são selecionados, enquanto C e D não fazem parte da solução.
+
 A quantidade de genes de cada cromossomo corresponde à quantidade de projetos cadastrados.
 
-### 4.4. População inicial
+### 5.4. Geração da população inicial
 
-A população inicial é gerada aleatoriamente. Cada gene possui probabilidade de 50% de assumir o valor `0` ou `1`.
+A população inicial é criada aleatoriamente. Cada gene tem probabilidade de 50% de assumir o valor `0` ou `1`.
 
-Após a geração, cada indivíduo passa pelo procedimento de reparo para garantir que respeite o orçamento.
+Após a geração, cada indivíduo passa pelo procedimento de reparo, de modo que as soluções utilizadas na população inicial respeitem o orçamento.
 
-### 4.5. Avaliação das soluções
+### 5.5. Avaliação das soluções
 
-A avaliação calcula:
+A avaliação de cada indivíduo considera:
 
 - Custo total dos projetos selecionados;
-- Benefício total;
-- Aptidão (*fitness*) do indivíduo.
+- Benefício total dos projetos selecionados;
+- Aptidão (*fitness*).
 
-A aptidão corresponde ao benefício total da solução após o reparo. Como soluções inviáveis são reparadas antes da avaliação, os indivíduos avaliados respeitam o orçamento.
+A aptidão corresponde ao benefício total da solução:
 
-### 4.6. Seleção por torneio
+\[
+\text{Fitness}(x) = \sum_{i=1}^{n} b_i x_i
+\]
 
-Na seleção por torneio, são escolhidos candidatos distintos da população, e o indivíduo com maior aptidão vence.
+Como o algoritmo repara soluções inviáveis antes da avaliação, a aptidão é calculada sobre cromossomos que respeitam a restrição orçamentária.
 
-Em caso de empate, vence o indivíduo que aparece primeiro na população original, conforme o índice utilizado na implementação.
+### 5.6. Seleção por torneio
 
-Os indivíduos selecionados são utilizados como pais na reprodução.
+Na seleção por torneio, são escolhidos candidatos distintos da população. O indivíduo com maior aptidão vence e é selecionado como pai.
 
-### 4.7. Cruzamento de um ponto
+Em caso de empate, vence o indivíduo que aparece primeiro na população original, considerando seu índice.
 
-O cruzamento combina partes dos cromossomos de dois pais para produzir descendentes.
+Os pais são selecionados a partir da população da geração atual, antes da formação da próxima geração.
 
-Um ponto de corte é escolhido aleatoriamente entre os genes, dividindo os cromossomos em duas partes. Os descendentes recebem uma parte de cada progenitor.
+### 5.7. Cruzamento de um ponto
 
-O cruzamento ocorre de acordo com a taxa configurada pelo usuário.
+O cruzamento combina partes dos cromossomos de dois pais para gerar descendentes.
 
-### 4.8. Mutação
+Um ponto de corte é escolhido aleatoriamente entre as posições internas permitidas do cromossomo. Os descendentes recebem segmentos dos dois pais, formando novas combinações de projetos.
 
-A mutação é aplicada independentemente a cada gene, de acordo com a taxa configurada.
+O cruzamento é realizado de acordo com a taxa configurada pelo usuário.
 
-Quando ocorre uma mutação, o gene é invertido:
+Quando não ocorre cruzamento, os descendentes são cópias dos cromossomos dos pais, que ainda podem sofrer mutação e reparo.
+
+### 5.8. Mutação
+
+A mutação é aplicada independentemente a cada gene, conforme a taxa de mutação configurada.
+
+Quando ocorre uma mutação, o valor do gene é invertido:
 
 - `0` passa a ser `1`;
 - `1` passa a ser `0`.
 
-Esse mecanismo introduz diversidade na população e permite explorar novas combinações de projetos.
+A mutação introduz diversidade na população e permite explorar novas combinações de projetos.
 
-### 4.9. Elitismo
+### 5.9. Elitismo
 
-O elitismo preserva os melhores indivíduos da população atual, copiando-os para a próxima geração sem modificações.
+O elitismo preserva os melhores indivíduos da população atual, copiando-os para a geração seguinte sem alterações.
 
-Isso ajuda a evitar a perda das melhores soluções encontradas durante a evolução.
+Os indivíduos de elite são selecionados de acordo com a aptidão, utilizando a ordem original da população para desempatar soluções de mesma aptidão.
 
-### 4.10. Reparo de soluções inviáveis
+Esse mecanismo ajuda a evitar a perda das melhores soluções encontradas durante a evolução.
 
-Quando uma solução ultrapassa o orçamento, o algoritmo remove projetos selecionados até que o custo total seja compatível com o orçamento.
+### 5.10. Reparo das soluções
 
-A cada etapa, é removido o projeto com a menor razão benefício/custo:
+Uma solução é inviável quando o custo total dos projetos selecionados ultrapassa o orçamento.
 
-$$
-\boxed{r_i = \frac{b_i}{c_i}}
-$$
+Para corrigir esse problema, o algoritmo remove projetos selecionados até que o custo total respeite a restrição orçamentária.
 
-Em caso de empate, é removido primeiro o projeto com menor índice na lista de projetos.
+A cada etapa, é removido o projeto com a menor razão entre benefício e custo:
 
-O procedimento é aplicado tanto à população inicial quanto aos descendentes gerados durante a execução.
+\[
+r_i = \frac{b_i}{c_i}
+\]
 
-Uma solução sem projetos selecionados também é válida, possuindo custo e benefício iguais a zero.
+Em caso de empate, é removido primeiro o projeto com menor índice na lista.
 
-### 4.11. Controle da simulação
+O reparo é aplicado tanto aos indivíduos da população inicial quanto aos descendentes produzidos durante a reprodução.
 
-A interface disponibiliza os controles para:
+Uma solução sem projetos selecionados também é válida. Nesse caso, o custo total e o benefício total são iguais a zero.
 
-- Executar o algoritmo;
-- Pausar a execução;
+### 5.11. Controle da simulação
+
+A interface permite acompanhar e controlar a execução do algoritmo por meio dos recursos disponíveis na aplicação, incluindo:
+
+- Executar a simulação;
+- Pausar e retomar a execução;
 - Avançar uma geração por vez;
-- Reiniciar a simulação.
+- Reiniciar a simulação;
+- Consultar o resultado final de todas as gerações.
 
-A execução é encerrada quando o número de gerações configurado é atingido.
+A execução termina quando o número de gerações configurado é atingido.
 
-O reinício cria uma nova população inicial e limpa o histórico da execução anterior, utilizando a semente configurada.
+A opção de visualizar o resultado final de todas as gerações permite concluir a execução sem precisar acompanhar individualmente todas as etapas da animação.
 
-### 4.12. Visualização dos resultados
+Ao reiniciar, a aplicação cria uma nova população inicial, reinicia o histórico e utiliza a semente configurada.
 
-Durante a simulação, a aplicação apresenta:
+**Importante:** alterações nos projetos ou nos parâmetros exigem o reinício da simulação para que sejam aplicadas à nova execução.
+
+### 5.12. Animações e logs
+
+Durante a execução, a interface apresenta os eventos do algoritmo para ajudar a compreender o processo evolutivo.
+
+Os logs podem representar eventos como:
+
+- Seleção dos pais;
+- Realização ou ausência de cruzamento;
+- Ponto de corte;
+- Cromossomos descendentes;
+- Mutações nos genes;
+- Reparação de soluções que ultrapassam o orçamento;
+- Preservação dos indivíduos de elite;
+- Formação das novas gerações.
+
+A animação permite acompanhar visualmente os cromossomos e as etapas da evolução. Os logs complementam essa visualização, registrando os eventos ocorridos durante a simulação.
+
+### 5.13. Visualização dos resultados
+
+A aplicação apresenta informações sobre a geração atual e a evolução das soluções, incluindo:
 
 - Geração atual;
 - Melhor aptidão da geração;
@@ -234,11 +280,15 @@ Durante a simulação, a aplicação apresenta:
 - Benefício total;
 - Orçamento restante;
 - Histórico das gerações;
-- Logs dos eventos do algoritmo.
+- População da geração;
+- Logs dos eventos;
+- Gráfico de evolução das aptidões.
 
-## 5. Projetos utilizados como exemplo
+O gráfico permite acompanhar a variação da melhor aptidão de cada geração, da aptidão média e da melhor aptidão acumulada durante a execução.
 
-A aplicação inicia com quatro projetos de melhoria do campus.
+## 6. Projetos utilizados como exemplo
+
+A aplicação inicia com quatro projetos de melhoria do campus universitário.
 
 | Projeto | Custo | Benefício |
 |---|---:|---:|
@@ -247,31 +297,37 @@ A aplicação inicia com quatro projetos de melhoria do campus.
 | C — Bancos para áreas comuns | R$ 2.000,00 | 3 |
 | D — Reforma da área de convivência | R$ 5.000,00 | 8 |
 
-O orçamento inicial é de R$ 7.000,00.
+O orçamento inicial é de **R$ 7.000,00**.
 
-Uma solução ótima para esses valores é o cromossomo `1100`, que seleciona os projetos A e B:
+Uma solução ótima para esses valores é o cromossomo `1100`, que seleciona os projetos A e B.
 
-- Custo total: R$ 7.000,00;
-- Benefício total: 12;
-- Orçamento restante: R$ 0,00.
+| Indicador | Resultado |
+|---|---:|
+| Cromossomo | `1100` |
+| Projetos selecionados | A e B |
+| Custo total | R$ 7.000,00 |
+| Benefício total | 12 |
+| Orçamento restante | R$ 0,00 |
 
-Esse exemplo pode ser utilizado para verificar se a aplicação calcula corretamente o custo e o benefício das soluções.
+A combinação de todos os quatro projetos possui custo total de R$ 14.000,00 e benefício total de 23. Portanto, ela só é viável quando o orçamento permite esse valor.
 
-## 6. Instruções de execução
+Esse exemplo pode ser utilizado para conferir os cálculos de custo, benefício e aptidão da aplicação.
 
-### 6.1. Requisitos
+## 7. Instruções de execução
+
+### 7.1. Requisitos
 
 Para executar a aplicação localmente, são necessários:
 
-- Um navegador atualizado, como Google Chrome, Firefox ou Microsoft Edge;
+- Um navegador atualizado, como Google Chrome, Mozilla Firefox ou Microsoft Edge;
 - Os arquivos do projeto;
-- Visual Studio Code, caso deseje utilizar o Live Server.
+- Visual Studio Code e Live Server, caso prefira executar por meio dessa ferramenta.
 
-Não é necessário instalar Python, Node.js ou dependências de backend para executar a versão estática da aplicação.
+Não é necessário instalar Python, Node.js, um banco de dados ou dependências de backend para executar a versão estática.
 
-### 6.2. Baixando o projeto
+### 7.2. Clonando o repositório
 
-Clone o repositório utilizando o seguinte comando no terminal:
+No terminal, execute:
 
 ```bash
 git clone https://github.com/MonnikLuianne/simulador-de-algoritmo-genetico.git
@@ -283,7 +339,7 @@ Entre na pasta do projeto:
 cd simulador-de-algoritmo-genetico
 ```
 
-### 6.3. Executando no Visual Studio Code
+### 7.3. Executando com o Visual Studio Code
 
 1. Abra a pasta do projeto no Visual Studio Code.
 2. Instale a extensão **Live Server**, caso ainda não esteja instalada.
@@ -292,80 +348,79 @@ cd simulador-de-algoritmo-genetico
 5. Selecione **Open with Live Server**.
 6. A aplicação será aberta no navegador.
 
-Como o projeto utiliza módulos JavaScript, recomenda-se executar a aplicação por meio do Live Server ou de outro servidor estático local, em vez de abrir o arquivo HTML diretamente pelo sistema de arquivos.
+Como o projeto utiliza módulos JavaScript, recomenda-se executar a aplicação por meio do Live Server ou de outro servidor estático local, em vez de abrir o HTML diretamente pelo sistema de arquivos.
 
-### 6.4. Utilizando a aplicação
+### 7.4. Utilizando a aplicação
 
 1. Confira os projetos cadastrados ou adicione novos projetos.
-2. Edite os nomes, custos e benefícios conforme necessário.
+2. Edite os nomes, os custos e os benefícios, se necessário.
 3. Defina o orçamento disponível.
-4. Configure a população, o número de gerações e os operadores genéticos.
-5. Informe a semente aleatória.
-6. Clique em **Executar**.
-7. Acompanhe a evolução das gerações, os indicadores, a melhor solução e o histórico.
-8. Utilize **Pausar** para interromper temporariamente a execução.
-9. Utilize **Avançar uma geração** para observar a evolução passo a passo.
-10. Utilize **Reiniciar** para começar uma nova simulação com a configuração atual.
+4. Configure o tamanho da população e o número de gerações.
+5. Configure as taxas de cruzamento e mutação.
+6. Defina o tamanho do torneio, a quantidade de indivíduos de elite e a semente aleatória.
+7. Inicie a simulação.
+8. Acompanhe as gerações, os cromossomos, os logs, os indicadores e o gráfico.
+9. Utilize os controles de pausa e avanço de geração para acompanhar o algoritmo passo a passo.
+10. Utilize a opção de resultado final para concluir e consultar a execução completa.
+11. Reinicie a simulação quando desejar iniciar uma nova execução ou aplicar alterações.
 
-Se os projetos ou os parâmetros forem alterados, reinicie a simulação para aplicar as alterações.
+## 8. Publicação no GitHub Pages
 
-## 7. Publicação no GitHub Pages
+A aplicação pode ser publicada pelo GitHub Pages por ser um projeto estático, sem necessidade de servidor backend.
 
-Por ser uma aplicação estática, o projeto pode ser hospedado pelo GitHub Pages.
+O procedimento geral é:
 
-Para publicar:
+1. Enviar os arquivos do projeto para um repositório no GitHub.
+2. Acessar **Settings** no repositório.
+3. Abrir a seção **Pages**.
+4. Em *Build and deployment*, selecionar a publicação a partir de uma branch.
+5. Escolher a branch principal, geralmente `main`, e a pasta raiz (`/root`).
+6. Salvar as configurações.
+7. Aguardar a conclusão da publicação.
+8. Acessar o endereço fornecido pelo GitHub Pages.
 
-1. Envie todos os arquivos para um repositório público no GitHub.
-2. Acesse as configurações do repositório em **Settings**.
-3. Abra a seção **Pages**.
-4. Em *Build and deployment*, selecione a publicação a partir de uma branch.
-5. Escolha a branch principal, geralmente `main`, e a pasta raiz (`/root`).
-6. Salve as configurações.
-7. Aguarde a publicação e acesse o endereço disponibilizado pelo GitHub Pages.
+Após alterações no código, é necessário enviá-las ao GitHub e aguardar a conclusão da implantação antes de verificar a versão publicada.
 
-Após a publicação, teste os controles, os campos e a execução do algoritmo diretamente pelo link público.
+**Repositório:** https://github.com/MonnikLuianne/simulador-de-algoritmo-genetico
 
-**Link do repositório:** `https://github.com/MonnikLuianne/simulador-de-algoritmo-genetico`
+**Aplicação publicada:** https://monnikluianne.github.io/simulador-de-algoritmo-genetico/
 
-**Link da aplicação publicada:** `https://monnikluianne.github.io/simulador-de-algoritmo-genetico/`
+## 9. Testes e validação
 
-## 8. Testes e validação
+A validação da aplicação deve contemplar os cálculos, os operadores genéticos, a evolução da população, os controles da interface e a reprodutibilidade das execuções.
 
-Durante o desenvolvimento, foram realizados testes de funcionamento das principais operações do algoritmo e da simulação.
-
-Entre os comportamentos verificados estão:
-
-- Geração de uma população com o tamanho configurado;
-- Respeito ao orçamento após o reparo;
-- Seleção por torneio;
-- Cruzamento de um ponto;
-- Mutação de genes;
-- Formação de uma nova geração;
-- Preservação da melhor aptidão pelo elitismo;
-- Atualização dos resultados e do histórico.
-
-Também é importante conferir os seguintes cenários antes da entrega:
+Os seguintes cenários são recomendados para verificar o funcionamento:
 
 | Cenário | Resultado esperado |
 |---|---|
-| Orçamento de R$ 7.000,00 com os projetos padrão | A solução `1100` possui custo de R$ 7.000,00 e benefício 12. |
-| Orçamento igual a zero | A solução viável é o cromossomo com todos os genes iguais a `0`. |
-| Orçamento de R$ 14.000,00 com os projetos padrão | Todos os projetos podem ser selecionados, resultando em benefício 23. |
-| Semente repetida e mesma configuração | A execução deve produzir os mesmos resultados, desde que todas as operações aleatórias utilizem o gerador semeado de forma consistente. |
-| Solução acima do orçamento | O reparo deve remover projetos até que a solução respeite o orçamento. |
-| Execução com elitismo | A melhor aptidão da geração não deve diminuir quando o elitismo preserva o melhor indivíduo e a avaliação permanece consistente. |
+| Orçamento de R$ 7.000,00 com os projetos padrão | O cromossomo `1100` apresenta custo de R$ 7.000,00 e benefício 12. |
+| Orçamento igual a zero | As soluções reparadas possuem todos os genes iguais a `0`. |
+| Orçamento de R$ 14.000,00 com os projetos padrão | O cromossomo `1111` é viável e apresenta benefício 23. |
+| Solução acima do orçamento | O reparo remove projetos até que a solução respeite o orçamento. |
+| Taxa de mutação igual a 0% | Nenhum gene sofre mutação. |
+| Taxa de mutação igual a 100% | Todos os genes dos descendentes submetidos à mutação são invertidos. |
+| Taxa de cruzamento igual a 0% | O cruzamento não é realizado. |
+| Taxa de cruzamento igual a 100% | O cruzamento é realizado para os pares de pais processados. |
+| Semente e configurações repetidas | A execução deve reproduzir os mesmos resultados quando a configuração e a sequência de operações pseudoaleatórias são mantidas. |
+| Execução com elitismo | A melhor aptidão da geração não deve diminuir quando o melhor indivíduo é preservado e a avaliação permanece consistente. |
+| Configurações inválidas | A aplicação deve impedir o início da simulação e informar os erros de validação. |
+| Avanço de geração | O número da geração, a população e o histórico devem ser atualizados. |
+| Reinício da simulação | A execução anterior deve ser encerrada e o histórico reiniciado. |
+| Resultado final de todas as gerações | A simulação deve avançar até a quantidade de gerações configurada e apresentar os resultados finais. |
 
-Os resultados específicos dos testes devem ser registrados conforme as execuções efetivamente realizadas.
+Os cenários apresentados constituem uma referência para os testes funcionais. Os resultados devem ser registrados conforme as execuções efetivamente realizadas, sem considerar um cenário como aprovado antes de verificá-lo.
 
-## 9. Limitações e observações
+## 10. Limitações e observações
 
-- A qualidade da solução encontrada depende dos parâmetros configurados e da aleatoriedade da busca.
-- O algoritmo genético não garante encontrar a solução ótima em todas as execuções.
-- A semente aleatória permite reproduzir a execução quando a implementação utiliza o mesmo fluxo pseudoaleatório para todas as operações.
-- A solução apresentada é executada no navegador e não utiliza backend.
-- Os dados dos projetos e o estado da simulação são mantidos durante a execução da página; não há persistência automática em banco de dados.
+- O algoritmo genético é um método de busca heurística e não garante encontrar a solução ótima em todas as configurações e execuções.
+- A qualidade das soluções depende dos parâmetros utilizados, da população inicial e das operações genéticas.
+- A semente aleatória permite reproduzir uma execução quando a configuração e a sequência de operações pseudoaleatórias são mantidas.
+- O reparo assegura que as soluções avaliadas respeitem o orçamento, mas a remoção de projetos conforme a razão benefício/custo é uma estratégia de reparo, não uma garantia geral de otimalidade.
+- A aplicação funciona no navegador e não utiliza backend.
+- Não há persistência automática dos projetos ou do estado da simulação em banco de dados; o estado é mantido durante a utilização da página.
+- A edição de projetos ou parâmetros exige reiniciar a simulação para aplicar as alterações.
 
-## 10. Autoria
+## 11. Autoria
 
 **Instituição:** Universidade Federal do Piauí (UFPI)
 
@@ -374,15 +429,17 @@ Os resultados específicos dos testes devem ser registrados conforme as execuç�
 **Trabalho:** Simulador de Algoritmo Genético
 
 **Integrantes:**
+
 - Monnik Luianne Oliveira Nascimento Veloso Barbosa
 - João Pedro Pereira da Luz
 - Guilherme Ribeiro Nunes Batista
 
-**Professor(a):** Pedro Almir Martins de Oliveira
+**Professor:** Pedro Almir Martins de Oliveira
 
-## 11. Considerações finais
+## 12. Considerações finais
 
-O projeto demonstra a aplicação prática de algoritmos genéticos em um problema de seleção de projetos com restrição orçamentária. A implementação reúne representação binária, avaliação de aptidão, seleção por torneio, cruzamento, mutação, elitismo e reparo de soluções inviáveis.
+O projeto demonstra a aplicação prática de algoritmos genéticos em um problema de seleção de projetos com restrição orçamentária.
 
-A interface permite acompanhar o processo evolutivo e observar como diferentes configurações influenciam a busca por soluções com maior benefício total, respeitando o orçamento disponível.
+A implementação reúne representação binária, avaliação de aptidão, seleção por torneio, cruzamento de um ponto, mutação, elitismo e reparo de soluções inviáveis.
 
+A interface permite acompanhar a evolução das populações, observar os efeitos dos operadores genéticos e comparar os resultados obtidos ao longo das gerações. Dessa forma, o simulador auxilia na compreensão do funcionamento de um algoritmo genético e da influência dos parâmetros sobre a busca por soluções de maior benefício total, respeitando o orçamento disponível.
