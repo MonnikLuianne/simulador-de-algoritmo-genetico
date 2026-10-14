@@ -18,24 +18,25 @@ Matematicamente, o objetivo é:
 
 **Maximizar:**
 
-\[
-B = \sum_{i=1}^{n} b_i x_i
-\]
+
+$$
+\boxed{\text{Maximizar } B = \sum_{i=1}^{n} b_i x_i}
+$$
 
 **Sujeito a:**
 
-\[
-\sum_{i=1}^{n} c_i x_i \leq O
-\]
+$$
+\boxed{\sum_{i=1}^{n} c_i x_i \leq O}
+$$
 
 Em que:
 
-- \(n\): quantidade de projetos cadastrados;
-- \(b_i\): benefício do projeto \(i\);
-- \(c_i\): custo do projeto \(i\);
-- \(x_i\): variável binária que indica se o projeto foi selecionado;
-- \(O\): orçamento disponível;
-- \(B\): benefício total dos projetos selecionados.
+- $B$: benefício total dos projetos selecionados.
+- $b_i$: benefício do projeto $i$.
+- $c_i$: custo do projeto $i$.
+- $x_i$: indica se o projeto $i$ foi selecionado ($1$) ou não ($0$).
+- $n$: quantidade total de projetos.
+- $O$: orçamento disponível.
 
 Cada variável binária pode assumir os valores:
 
