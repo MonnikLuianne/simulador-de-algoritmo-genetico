@@ -374,8 +374,9 @@ Os resultados específicos dos testes devem ser registrados conforme as execuç�
 **Trabalho:** Simulador de Algoritmo Genético
 
 **Integrantes:**
-- Nome do integrante 1
-- Nome do integrante 2
+- Monnik Luianne Oliveira Nascimento Veloso Barbosa
+- João Pedro Pereira da Luz
+- Guilherme
 
 **Professor(a):** Nome do(a) professor(a)
 
