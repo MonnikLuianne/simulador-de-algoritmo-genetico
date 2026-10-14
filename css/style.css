@@ -1,3 +1,4 @@
+
 :root {
   font-family: "Segoe UI", Arial, sans-serif;
   color: #202b43;
@@ -11,9 +12,7 @@
   --fundo-card: #ffffff;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -23,20 +22,14 @@ body {
   line-height: 1.6;
 }
 
-button,
-input,
-select {
-  font: inherit;
-}
+button, input, select { font: inherit; }
 
 button {
   cursor: pointer;
   transition: background 0.2s, transform 0.2s;
 }
 
-button:hover {
-  transform: translateY(-1px);
-}
+button:hover { transform: translateY(-1px); }
 
 .cabecalho {
   padding: 38px 24px;
@@ -51,16 +44,8 @@ button:hover {
   line-height: 1.25;
 }
 
-.cabecalho p {
-  margin: 0;
-  color: #eef0ff;
-}
-
-.cabecalho a {
-  display: inline-block;
-  margin-top: 14px;
-  color: white;
-}
+.cabecalho p { margin: 0; color: #eef0ff; }
+.cabecalho a { display: inline-block; margin-top: 14px; color: white; }
 
 .container {
   width: min(1100px, calc(100% - 32px));
@@ -77,21 +62,10 @@ button:hover {
   box-shadow: 0 5px 20px rgba(35, 48, 85, 0.05);
 }
 
-.painel h2 {
-  margin: 0 0 8px;
-  font-size: 1.35rem;
-  line-height: 1.4;
-}
+.painel h2 { margin: 0 0 8px; font-size: 1.35rem; line-height: 1.4; }
+.painel > p { margin: 0 0 24px; color: var(--texto-suave); }
 
-.painel > p {
-  margin: 0 0 24px;
-  color: var(--texto-suave);
-}
-
-#lista-projetos {
-  display: grid;
-  gap: 16px;
-}
+#lista-projetos { display: grid; gap: 16px; }
 
 .projeto-item {
   display: grid;
@@ -144,9 +118,7 @@ button:hover {
   border-radius: 9px;
 }
 
-.botao-remover:hover {
-  background: #ffe1e4;
-}
+.botao-remover:hover { background: #ffe1e4; }
 
 .botao {
   display: inline-flex;
@@ -159,23 +131,10 @@ button:hover {
   font-weight: 600;
 }
 
-.botao-primario {
-  color: white;
-  background: var(--primaria);
-}
-
-.botao-primario:hover {
-  background: var(--primaria-hover);
-}
-
-.botao-secundario {
-  color: #46516b;
-  background: #edf0fa;
-}
-
-#adicionar-projeto {
-  margin-top: 18px;
-}
+.botao-primario { color: white; background: var(--primaria); }
+.botao-primario:hover { background: var(--primaria-hover); }
+.botao-secundario { color: #46516b; background: #edf0fa; }
+#adicionar-projeto { margin-top: 18px; }
 
 .grade-campos {
   display: grid;
@@ -233,8 +192,9 @@ button:hover {
   border-radius: 14px;
 }
 
-.cartao-resultado p {
-  margin: 0 0 6px;
+.cartao-resultado span {
+  display: block;
+  margin-bottom: 6px;
   color: var(--texto-suave);
   font-size: 0.9rem;
 }
@@ -245,30 +205,18 @@ button:hover {
   color: var(--primaria);
 }
 
-.tabela-container {
-  width: 100%;
-  overflow-x: auto;
-}
+.tabela-container { width: 100%; overflow-x: auto; }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.92rem;
-}
+table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
 
-th,
-td {
+th, td {
   padding: 13px 15px;
   text-align: left;
   border-bottom: 1px solid var(--borda);
   white-space: nowrap;
 }
 
-th {
-  color: #46516b;
-  background: #f6f7fc;
-  font-weight: 700;
-}
+th { color: #46516b; background: #f6f7fc; font-weight: 700; }
 
 .logs {
   max-height: 320px;
@@ -282,44 +230,272 @@ th {
   overflow-wrap: anywhere;
 }
 
-footer {
-  padding: 24px;
-  color: var(--texto-suave);
-  text-align: center;
+footer { padding: 24px; color: var(--texto-suave); text-align: center; }
+
+/* Controles da animação */
+
+.botoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 10px;
+  margin-top: 22px;
 }
 
+.botoes .botao { min-height: 42px; }
+
+.botao:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.campo-velocidade { min-width: 170px; flex: 1; }
+.campo-velocidade label { display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 600; }
+
+.campo-velocidade select {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 1px solid #d7ddec;
+  border-radius: 9px;
+  background: #fff;
+  color: #202b43;
+}
+
+.animacao-status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 18px 0 8px;
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.barra-progresso {
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  background: #e9ecf7;
+  border-radius: 999px;
+}
+
+#progresso-animacao {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #5865d9, #a78bfa);
+  border-radius: inherit;
+  transition: width 0.25s ease;
+}
+
+.quadro-animacao {
+  position: relative;
+  min-height: 180px;
+  margin: 18px 0 24px;
+  padding: 24px;
+  overflow-wrap: anywhere;
+  border: 1px solid #dfe4f3;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f8f9ff, #f0f2ff);
+  animation: entrar-etapa 0.22s ease-out;
+}
+
+.quadro-animacao h3 { margin: 12px 0 8px; color: #303d83; font-size: 1.2rem; }
+.quadro-animacao p { margin: 0; color: #4f5b75; }
+
+.etapa-selo {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e1e6ff;
+  color: #404eb5;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.etapa-indicador { margin-top: 18px; color: #737e98; font-size: 0.8rem; font-weight: 700; }
+
+@keyframes entrar-etapa {
+  from { opacity: 0.5; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Visualização dos cromossomos */
+
+.painel-cromossomos {
+  margin: 20px 0 28px;
+  padding: 20px;
+  border: 1px solid #e1e6f0;
+  border-radius: 14px;
+  background: #fbfcff;
+}
+
+.painel-cromossomos h3 { margin: 0 0 6px; }
+.painel-cromossomos .descricao { margin: 0 0 16px; color: var(--texto-suave); }
+
+.visual-cromossomos { min-width: 0; }
+
+.cromossomos-grade {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.cromossomo-card {
+  min-width: 0;
+  padding: 14px;
+  background: white;
+  border: 1px solid #e0e5f0;
+  border-radius: 12px;
+  animation: cromossomo-entrar 0.35s ease both;
+  animation-delay: calc(var(--ordem-cromossomo, 0) * 70ms);
+}
+
+.cromossomo-card strong {
+  display: block;
+  margin-bottom: 10px;
+  color: #4b5671;
+  font-size: 0.88rem;
+}
+
+.cromossomo-filho { border-color: #c8c8ff; background: #fbfaff; }
+
+.genes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 9px;
+}
+
+.gene {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 44px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  animation: gene-aparecer 0.25s ease both;
+}
+
+.gene small {
+  margin-top: 1px;
+  font-size: 0.62rem;
+  font-weight: 600;
+}
+
+.gene-zero { color: #59657c; background: #edf0f6; border-color: #dce1ea; }
+.gene-um { color: #17694f; background: #d9f8e9; border-color: #9de5c5; }
+.gene-herdado { box-shadow: inset 0 0 0 2px #8b5cf6; transform: translateY(-2px); }
+
+.legenda-genes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-top: 16px;
+  color: var(--texto-suave);
+  font-size: 0.8rem;
+}
+
+.legenda-genes span { display: inline-flex; align-items: center; gap: 6px; }
+.legenda-genes i { width: 15px; height: 15px; border-radius: 4px; display: inline-block; }
+.legenda-genes .gene-zero { background: #edf0f6; }
+.legenda-genes .gene-um { background: #d9f8e9; }
+.legenda-genes .gene-herdado { background: #f0eaff; border: 2px solid #8b5cf6; }
+
+.explicacao-cromossomos {
+  margin: 14px 0 0;
+  color: #5f6b84;
+  font-size: 0.88rem;
+}
+
+.sem-cromossomos { color: var(--texto-suave); overflow-wrap: anywhere; }
+
+@keyframes cromossomo-entrar {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes gene-aparecer {
+  from { opacity: 0.35; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Gráfico de evolução */
+
+.grafico-evolucao { width: 100%; min-height: 150px; }
+
+.grafico-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 380px;
+  overflow: visible;
+}
+
+.grade-svg { stroke: #e5e9f3; stroke-width: 1; }
+.eixo-svg { stroke: #aeb7ca; stroke-width: 1.2; }
+.rotulo-svg { fill: #78839b; font-size: 11px; }
+
+.linha-svg {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.linha-melhor { stroke: #5865d9; }
+.linha-media { stroke: #e4a23b; stroke-dasharray: 6 4; }
+.linha-acumulado { stroke: #209b78; }
+
+.legenda-grafico {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 12px;
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+}
+
+.legenda-grafico span { display: inline-flex; align-items: center; gap: 7px; }
+.legenda-grafico i { display: inline-block; width: 22px; height: 4px; border-radius: 5px; }
+.legenda-melhor { background: #5865d9; }
+.legenda-media { background: #e4a23b; }
+.legenda-acumulado { background: #209b78; }
+
+#tabela-populacao code,
+#resultado-final code {
+  padding: 3px 6px;
+  color: #404eb5;
+  background: #edf0ff;
+  border-radius: 5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+#logs p {
+  margin: 0 0 8px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+#logs p:last-child { margin-bottom: 0; border-bottom: 0; }
+
 @media (max-width: 700px) {
-  .container {
-    width: min(100% - 20px, 600px);
-    margin-top: 16px;
-  }
-
-  .painel {
-    padding: 18px;
-    border-radius: 14px;
-  }
-
-  .projeto-item {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
-    padding: 16px;
-  }
-
-  .botao-remover {
-    grid-column: auto;
-    justify-self: stretch;
-  }
-
-  .grade-campos,
-  .grade-resultados {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .grade-botoes {
-    flex-direction: column;
-  }
-
-  .grade-botoes .botao {
-    width: 100%;
-  }
+  .container { width: min(100% - 20px, 600px); margin-top: 16px; }
+  .painel { padding: 18px; border-radius: 14px; }
+  .projeto-item { grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 16px; }
+  .botao-remover { grid-column: auto; justify-self: stretch; }
+  .grade-campos, .grade-resultados, .cromossomos-grade { grid-template-columns: minmax(0, 1fr); }
+  .botoes { flex-direction: column; align-items: stretch; }
+  .botoes .botao, .campo-velocidade { width: 100%; }
+  .quadro-animacao { padding: 18px; }
+  .legenda-grafico { flex-direction: column; gap: 8px; }
 }

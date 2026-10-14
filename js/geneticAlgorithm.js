@@ -1,8 +1,7 @@
+
 import { criarGeradorAleatorio } from "./random.js";
 import { repararSolucao } from "./repair.js";
 import { avaliarSolucao } from "./evaluation.js";
-
-
 
 export function gerarPopulacaoInicial(
   projetos,
@@ -18,19 +17,12 @@ export function gerarPopulacaoInicial(
       aleatorio() < 0.5 ? 0 : 1
     );
 
-    const resultado = repararSolucao(
-      cromossomo,
-      projetos,
-      orcamento
-    );
-
+    const resultado = repararSolucao(cromossomo, projetos, orcamento);
     populacao.push(resultado.cromossomo);
   }
 
   return populacao;
 }
-
-
 
 export function selecionarPorTorneio(
   populacao,
@@ -54,13 +46,11 @@ export function selecionarPorTorneio(
 
   for (const indice of candidatos.slice(1)) {
     const fitnessAtual = avaliarSolucao(
-      populacao[indice],
-      projetos
+      populacao[indice], projetos
     ).fitness;
 
     const fitnessVencedor = avaliarSolucao(
-      populacao[vencedor],
-      projetos
+      populacao[vencedor], projetos
     ).fitness;
 
     if (
@@ -74,9 +64,7 @@ export function selecionarPorTorneio(
   return [...populacao[vencedor]];
 }
 
-
 export function cruzamentoUmPonto(pai1, pai2, aleatorio) {
-  // O ponto de corte fica entre o primeiro e o último gene.
   const pontoCorte =
     Math.floor(aleatorio() * (pai1.length - 1)) + 1;
 
@@ -90,36 +78,24 @@ export function cruzamentoUmPonto(pai1, pai2, aleatorio) {
     ...pai1.slice(pontoCorte)
   ];
 
-  return {
-    pontoCorte,
-    filho1,
-    filho2
-  };
+  return { pontoCorte, filho1, filho2 };
 }
-
 
 export function mutarCromossomo(cromossomo, taxaMutacao, aleatorio) {
   const mutado = [...cromossomo];
   const eventos = [];
 
   for (let i = 0; i < mutado.length; i++) {
-    // Cada gene tem uma chance independente de sofrer mutação.
     if (aleatorio() < taxaMutacao / 100) {
       const valorAnterior = mutado[i];
       mutado[i] = mutado[i] === 0 ? 1 : 0;
 
-      eventos.push(
-        `Gene ${i}: ${valorAnterior} -> ${mutado[i]}`
-      );
+      eventos.push(`Gene ${i}: ${valorAnterior} -> ${mutado[i]}`);
     }
   }
 
-  return {
-    cromossomo: mutado,
-    eventos
-  };
+  return { cromossomo: mutado, eventos };
 }
-
 
 export function executarGeracao(
   populacao,
@@ -130,45 +106,39 @@ export function executarGeracao(
   const novaPopulacao = [];
   const eventos = [];
 
-  // Avalia todos os indivíduos da população atual.
   const avaliados = populacao.map((cromossomo, indice) => ({
     cromossomo: [...cromossomo],
     fitness: avaliarSolucao(cromossomo, projetos).fitness,
     indice
   }));
 
-  // Ordena por fitness decrescente.
-  // Em caso de empate, mantém primeiro o menor índice original.
   avaliados.sort(
     (a, b) => b.fitness - a.fitness || a.indice - b.indice
   );
 
-  // Copia os melhores indivíduos sem alterações (elitismo).
   for (let i = 0; i < configuracoes.elite; i++) {
     novaPopulacao.push([...avaliados[i].cromossomo]);
-    eventos.push(`Elitismo: indivíduo ${avaliados[i].indice} preservado.`);
+    eventos.push(
+      `Elitismo: indivíduo ${avaliados[i].indice} preservado; cromossomo ${avaliados[i].cromossomo.join("")}.`
+    );
   }
 
-  // Gera filhos até completar o tamanho da população.
   while (novaPopulacao.length < configuracoes.populacao) {
     const pai1 = selecionarPorTorneio(
-      populacao,
-      projetos,
-      configuracoes.torneio,
-      aleatorio
+      populacao, projetos, configuracoes.torneio, aleatorio
     );
 
     const pai2 = selecionarPorTorneio(
-      populacao,
-      projetos,
-      configuracoes.torneio,
-      aleatorio
+      populacao, projetos, configuracoes.torneio, aleatorio
     );
 
     let filho1 = [...pai1];
     let filho2 = [...pai2];
 
-    // Decide se o par sofrerá cruzamento.
+    eventos.push(
+      `Seleção por torneio: pais escolhidos ${pai1.join("")} e ${pai2.join("")}.`
+    );
+
     if (aleatorio() < configuracoes.cruzamento / 100) {
       const resultado = cruzamentoUmPonto(pai1, pai2, aleatorio);
       filho1 = resultado.filho1;
@@ -179,53 +149,67 @@ export function executarGeracao(
         `${pai1.join("")} + ${pai2.join("")} -> ` +
         `${filho1.join("")} e ${filho2.join("")}`
       );
+    } else {
+      eventos.push(
+        `Sem cruzamento para o par ${pai1.join("")} e ${pai2.join("")}; cópias dos pais seguem para mutação.`
+      );
     }
 
-    // Aplica mutação individualmente a cada filho.
     const mutacao1 = mutarCromossomo(
-      filho1,
-      configuracoes.mutacao,
-      aleatorio
+      filho1, configuracoes.mutacao, aleatorio
     );
 
     const mutacao2 = mutarCromossomo(
-      filho2,
-      configuracoes.mutacao,
-      aleatorio
+      filho2, configuracoes.mutacao, aleatorio
     );
 
     filho1 = mutacao1.cromossomo;
     filho2 = mutacao2.cromossomo;
 
-    eventos.push(...mutacao1.eventos.map(
-      evento => `Mutação no filho 1: ${evento}`
-    ));
-
-    eventos.push(...mutacao2.eventos.map(
-      evento => `Mutação no filho 2: ${evento}`
-    ));
-
-    // Repara o primeiro filho antes de adicioná-lo.
-    const reparo1 = repararSolucao(
-      filho1,
-      projetos,
-      configuracoes.orcamento
+    eventos.push(
+      ...mutacao1.eventos.map(evento => `Mutação no filho 1: ${evento}`)
     );
 
+    eventos.push(
+      ...mutacao2.eventos.map(evento => `Mutação no filho 2: ${evento}`)
+    );
+
+    const reparo1 = repararSolucao(
+      filho1, projetos, configuracoes.orcamento
+    );
+
+    
     novaPopulacao.push(reparo1.cromossomo);
+
+    eventos.push(
+      `Filho 1 após mutação: ${filho1.join("")}.`
+    );
 
     eventos.push(...reparo1.eventos);
 
-    // Se ainda houver vaga, adiciona o segundo filho.
+    eventos.push(
+      `Filho 1 após reparo: ${reparo1.cromossomo.join("")}.`
+    );
+
+
     if (novaPopulacao.length < configuracoes.populacao) {
       const reparo2 = repararSolucao(
-        filho2,
-        projetos,
-        configuracoes.orcamento
+        filho2, projetos, configuracoes.orcamento
       );
 
+      
       novaPopulacao.push(reparo2.cromossomo);
+
+      eventos.push(
+        `Filho 2 após mutação: ${filho2.join("")}.`
+      );
+
       eventos.push(...reparo2.eventos);
+
+      eventos.push(
+        `Filho 2 após reparo: ${reparo2.cromossomo.join("")}.`
+      );
+
     }
   }
 
