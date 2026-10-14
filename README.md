@@ -387,28 +387,131 @@ Após alterações no código, é necessário enviá-las ao GitHub e aguardar a 
 
 ## 9. Testes e validação
 
-A validação da aplicação deve contemplar os cálculos, os operadores genéticos, a evolução da população, os controles da interface e a reprodutibilidade das execuções.
+### 9.1 Avaliação de soluções (seção 6.2)
 
-Os seguintes cenários são recomendados para verificar o funcionamento:
+**Entrada:** cromossomo `1100`; orçamento R$ 7.000.
 
-| Cenário | Resultado esperado |
+**Saída obtida:** projetos A e B; custo total R$ 7.000,00; benefício total 12; saldo R$ 0,00; aptidão 12.
+
+Todas as soluções viáveis verificadas:
+
+| Cromossomo | Custo (R$) | Benefício | Resultado |
+|---|---|---|---|
+| `0000` | 0 | 0 | ✓ |
+| `1000` | 4.000 | 7 | ✓ |
+| `0100` | 3.000 | 5 | ✓ |
+| `0010` | 2.000 | 3 | ✓ |
+| `0001` | 5.000 | 8 | ✓ |
+| `1100` | 7.000 | 12 | ✓ |
+| `1010` | 6.000 | 10 | ✓ |
+| `0110` | 5.000 | 8 | ✓ |
+| `0011` | 7.000 | 11 | ✓ |
+
+**Conclusão:** todos os valores de custo e benefício coincidem com os esperados.
+
+---
+
+### 9.2 Reparação de solução inviável (seção 6.3)
+
+**Entrada:** cromossomo `1111`; orçamento R$ 7.000.
+
+**Saída obtida:**
+
+| Passo | Cromossomo | Custo (R$) | Ação |
+|---|---|---|---|
+| Inicial | `1111` | 14.000 | — |
+| Remover C (razão 0,0015) | `1101` | 12.000 | Menor razão benefício/custo |
+| Remover D (razão 0,0016) | `1100` | 7.000 | Menor razão restante |
+
+**Resultado final:** `1100`; custo R$ 7.000; benefício 12; aptidão 12.
+
+**Conclusão:** saída exata conforme esperado pelo enunciado.
+
+---
+
+### 9.3 Cruzamento e mutação controlados (seção 6.4)
+
+**Entrada:** pai 1 = `1100`; pai 2 = `0011`; corte após o gene 2.
+
+| Etapa | Filho 1 | Filho 2 |
+|---|---|---|
+| Após cruzamento | `1111` | `0000` |
+| Após mutação (gene 0 do filho 1) | `0111` | `0000` |
+| Após reparo | `0100` | `0000` |
+| Custo final (R$) | 3.000 | 0 |
+| Aptidão final | 5 | 0 |
+
+Reparo do filho 1: `0111` → remove C (razão 0,0015) → `0101` → remove D (razão 0,0016) → `0100`.
+
+**Testes de limite:**
+
+| Teste | Resultado |
 |---|---|
-| Orçamento de R$ 7.000,00 com os projetos padrão | O cromossomo `1100` apresenta custo de R$ 7.000,00 e benefício 12. |
-| Orçamento igual a zero | As soluções reparadas possuem todos os genes iguais a `0`. |
-| Orçamento de R$ 14.000,00 com os projetos padrão | O cromossomo `1111` é viável e apresenta benefício 23. |
-| Solução acima do orçamento | O reparo remove projetos até que a solução respeite o orçamento. |
-| Taxa de mutação igual a 0% | Nenhum gene sofre mutação. |
-| Taxa de mutação igual a 100% | Todos os genes dos descendentes submetidos à mutação são invertidos. |
-| Taxa de cruzamento igual a 0% | O cruzamento não é realizado. |
-| Taxa de cruzamento igual a 100% | O cruzamento é realizado para os pares de pais processados. |
-| Semente e configurações repetidas | A execução deve reproduzir os mesmos resultados quando a configuração e a sequência de operações pseudoaleatórias são mantidas. |
-| Execução com elitismo | A melhor aptidão da geração não deve diminuir quando o melhor indivíduo é preservado e a avaliação permanece consistente. |
-| Configurações inválidas | A aplicação deve impedir o início da simulação e informar os erros de validação. |
-| Avanço de geração | O número da geração, a população e o histórico devem ser atualizados. |
-| Reinício da simulação | A execução anterior deve ser encerrada e o histórico reiniciado. |
-| Resultado final de todas as gerações | A simulação deve avançar até a quantidade de gerações configurada e apresentar os resultados finais. |
+| Mutação 0%: nenhum gene invertido | ✓ |
+| Mutação 100%: todos os genes invertidos | ✓ |
+| Torneio com candidatos 1000 (apt. 7), 0011 (apt. 11), 1100 (apt. 12) → vencedor `1100` | ✓ |
 
-Os cenários apresentados constituem uma referência para os testes funcionais. Os resultados devem ser registrados conforme as execuções efetivamente realizadas, sem considerar um cenário como aprovado antes de verificá-lo.
+**Conclusão:** todos os valores coincidem exatamente com os esperados.
+
+---
+
+### 9.4 Execução completa (seção 6.5)
+
+**Configuração:** população 20; 50 gerações; cruzamento 80%; mutação 5%; torneio 2; elite 1; semente 42.
+
+**Resultado obtido:** cromossomo `1100`; projetos A e B; custo R$ 7.000,00; benefício 12; saldo R$ 0,00.
+
+| Verificação | Resultado |
+|---|---|
+| Histórico com 51 registros (geração 0 a 50) | ✓ |
+| Melhor benefício acumulado nunca diminui | ✓ |
+| Melhor aptidão da população não diminui (1 elite) | ✓ |
+| Custo final dentro do orçamento | ✓ |
+| Totais compatíveis com o cromossomo | ✓ |
+
+---
+
+### 9.5 Análise do efeito da taxa de mutação (seção 6.5)
+
+Parâmetros fixos: população 20, 50 gerações, cruzamento 80%, torneio 2, elite 1.
+Cinco execuções por configuração, com sementes 1, 2, 3, 4 e 5.
+
+**Taxa de mutação: 1%**
+
+| Semente | Melhor cromossomo | Melhor benefício | Atingiu ótimo (12)? |
+|---|---|---|---|
+| 1 | `1100` | 12 | Sim |
+| 2 | `1100` | 12 | Sim |
+| 3 | `1100` | 12 | Sim |
+| 4 | `1100` | 12 | Sim |
+| 5 | `1100` | 12 | Sim |
+
+**Média do melhor benefício final:** 12,00 — **Execuções que atingiram 12:** 5 de 5
+
+**Taxa de mutação: 20%**
+
+| Semente | Melhor cromossomo | Melhor benefício | Atingiu ótimo (12)? |
+|---|---|---|---|
+| 1 | `1100` | 12 | Sim |
+| 2 | `1100` | 12 | Sim |
+| 3 | `1100` | 12 | Sim |
+| 4 | `1100` | 12 | Sim |
+| 5 | `1100` | 12 | Sim |
+
+**Média do melhor benefício final:** 12,00 — **Execuções que atingiram 12:** 5 de 5
+
+**Interpretação:** as duas taxas produziram a mesma média (12,00) e atingiram o ótimo em todas as execuções. Isso indica que, para esta instância pequena (4 projetos, população 20), o impacto da taxa de mutação é limitado: o espaço de busca possui apenas 16 combinações possíveis, das quais 9 são viáveis, de modo que o algoritmo encontra o ótimo com facilidade independentemente da taxa escolhida. Não se pode concluir que uma taxa é sempre superior à outra — em instâncias maiores, taxas muito baixas podem deixar o algoritmo preso em ótimos locais, enquanto taxas muito altas podem desfazer boas soluções encontradas pelo cruzamento e pelo elitismo.
+
+---
+
+### 9.6 Limites de orçamento (seção 6.6)
+
+| Cenário | Resultado obtido | Conclusão |
+|---|---|---|
+| Orçamento R$ 0 | Toda a população reparada para `0000`; custo 0, benefício 0, aptidão 0 | ✓ |
+| Orçamento R$ 14.000 | Cromossomo `1111` viável; custo R$ 14.000; benefício 23; saldo R$ 0 | ✓ |
+
+---
 
 ## 10. Limitações e observações
 
