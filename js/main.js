@@ -1,4 +1,3 @@
-
 import { lerConfiguracoes } from "./validation.js";
 import { avaliarSolucao } from "./evaluation.js";
 import { criarSimulacao } from "./simulation.js";
@@ -334,8 +333,9 @@ function criarRoteiro(eventos, geracaoAlvo) {
 
     if (/Cruzamento/i.test(evento)) tipo = "Cruzamento";
     else if (/Mutação/i.test(evento)) tipo = "Mutação";
-    else if (/Projeto removido|Reparo/i.test(evento)) tipo = "Reparo";
+    else if (/Remover|Reparo/i.test(evento)) tipo = "Reparo";
     else if (/Elitismo/i.test(evento)) tipo = "Elitismo";
+    else if (/Seleção por torneio/i.test(evento)) tipo = "Seleção";
 
     passos.push({
       titulo: tipo,
@@ -380,12 +380,12 @@ function mostrarCromossomos(etapa) {
 
   if (/Cruzamento/i.test(etapa.tipo) || /Cruzamento/i.test(descricao)) {
     rotulos = ["Pai 1", "Pai 2", "Filho 1", "Filho 2"];
-  } else if (/Seleção/i.test(etapa.tipo) || /pais escolhidos/i.test(descricao)) {
+  } else if (/Seleção/i.test(etapa.tipo) || /pai 1 =/i.test(descricao)) {
     rotulos = ["Pai selecionado 1", "Pai selecionado 2"];
-  } else if (/Filho 1 após mutação/i.test(descricao)) {
-    rotulos = ["Filho antes do reparo", "Filho depois do reparo"];
-  } else if (/Filho 2 após mutação/i.test(descricao)) {
-    rotulos = ["Filho antes do reparo", "Filho depois do reparo"];
+  } else if (/Reparo do filho 1/i.test(descricao)) {
+    rotulos = ["Filho 1 antes do reparo", "Filho 1 depois do reparo"];
+  } else if (/Reparo do filho 2/i.test(descricao)) {
+    rotulos = ["Filho 2 antes do reparo", "Filho 2 depois do reparo"];
   } else if (/Mutação/i.test(etapa.tipo)) {
     rotulos = ["Cromossomo em mutação"];
   } else if (/Elitismo/i.test(etapa.tipo)) {
@@ -474,7 +474,7 @@ function atualizarQuadro() {
       <span class="etapa-selo">AGUARDANDO</span>
       <h3>Pronto para começar</h3>
       <p>
-        Pressione “Reproduzir animação” para acompanhar uma geração
+        Pressione "Reproduzir animação" para acompanhar uma geração
         passo a passo.
       </p>`;
 

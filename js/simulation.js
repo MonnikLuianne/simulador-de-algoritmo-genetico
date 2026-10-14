@@ -1,4 +1,3 @@
-
 import { gerarPopulacaoInicial, executarGeracao } from "./geneticAlgorithm.js";
 import { avaliarSolucao } from "./evaluation.js";
 import { criarGeradorAleatorio } from "./random.js";
@@ -61,13 +60,17 @@ export function criarSimulacao(projetos, configuracoes) {
   }
 
   function reiniciar() {
+    // Um único gerador compartilhado, inicializado com a semente.
+    // A geração da população inicial e as gerações subsequentes
+    // consomem a mesma sequência pseudoaleatória, garantindo
+    // reprodutibilidade completa.
     aleatorio = criarGeradorAleatorio(configuracoes.semente);
 
     populacao = gerarPopulacaoInicial(
       projetosCopia,
       configuracoes.populacao,
       configuracoes.orcamento,
-      configuracoes.semente
+      aleatorio      // passa o gerador compartilhado
     );
 
     geracaoAtual = 0;
