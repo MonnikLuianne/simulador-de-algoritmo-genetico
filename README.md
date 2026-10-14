@@ -197,9 +197,9 @@ Quando uma solução ultrapassa o orçamento, o algoritmo remove projetos seleci
 
 A cada etapa, é removido o projeto com a menor razão benefício/custo:
 
-\[
-r_i = \frac{b_i}{c_i}
-\]
+$$
+\boxed{r_i = \frac{b_i}{c_i}}
+$$
 
 Em caso de empate, é removido primeiro o projeto com menor índice na lista de projetos.
 
