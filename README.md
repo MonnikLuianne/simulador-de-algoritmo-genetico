@@ -376,7 +376,7 @@ Os resultados específicos dos testes devem ser registrados conforme as execuç�
 **Integrantes:**
 - Monnik Luianne Oliveira Nascimento Veloso Barbosa
 - João Pedro Pereira da Luz
-- Guilherme
+- Guilherme Ribeiro Nunes Batista
 
 **Professor(a):** Nome do(a) professor(a)
 
