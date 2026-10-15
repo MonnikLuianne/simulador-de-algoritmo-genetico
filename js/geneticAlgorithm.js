@@ -166,15 +166,9 @@ export function executarGeracao(
       filho1, configuracoes.mutacao, aleatorio
     );
 
-    const mutacao2 = mutarCromossomo(
-      filho2, configuracoes.mutacao, aleatorio
-    );
-
     const filho1AntesMutacao = filho1.join("");
-    const filho2AntesMutacao = filho2.join("");
 
     filho1 = mutacao1.cromossomo;
-    filho2 = mutacao2.cromossomo;
 
     if (mutacao1.eventos.length > 0) {
       eventos.push(
@@ -182,14 +176,6 @@ export function executarGeracao(
       );
     } else {
       eventos.push(`Mutação no filho 1: nenhum gene alterado (${filho1.join("")}).`);
-    }
-
-    if (mutacao2.eventos.length > 0) {
-      eventos.push(
-        `Mutação no filho 2 (${filho2AntesMutacao} → ${filho2.join("")}): ${mutacao2.eventos.join("; ")}.`
-      );
-    } else {
-      eventos.push(`Mutação no filho 2: nenhum gene alterado (${filho2.join("")}).`);
     }
 
     // Reparo e adição do filho 1
@@ -207,8 +193,23 @@ export function executarGeracao(
       eventos.push(`Filho 1 viável: ${reparo1.cromossomo.join("")} (aptidão ${reparo1.avaliacao.fitness}).`);
     }
 
-    // Só adiciona filho 2 se ainda há vagas
+    // Só aplica mutação, repara e adiciona filho 2 se ainda há vagas
     if (novaPopulacao.length < configuracoes.populacao) {
+      const mutacao2 = mutarCromossomo(
+        filho2, configuracoes.mutacao, aleatorio
+      );
+
+      const filho2AntesMutacao = filho2.join("");
+      filho2 = mutacao2.cromossomo;
+
+      if (mutacao2.eventos.length > 0) {
+        eventos.push(
+          `Mutação no filho 2 (${filho2AntesMutacao} → ${filho2.join("")}): ${mutacao2.eventos.join("; ")}.`
+        );
+      } else {
+        eventos.push(`Mutação no filho 2: nenhum gene alterado (${filho2.join("")}).`);
+      }
+
       const reparo2 = repararSolucao(
         filho2, projetos, configuracoes.orcamento
       );
@@ -222,6 +223,8 @@ export function executarGeracao(
       } else {
         eventos.push(`Filho 2 viável: ${reparo2.cromossomo.join("")} (aptidão ${reparo2.avaliacao.fitness}).`);
       }
+    } else {
+      eventos.push(`Filho 2 descartado (só restava uma vaga): ${filho2.join("")} não entra na população.`);
     }
   }
 

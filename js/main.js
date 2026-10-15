@@ -100,7 +100,7 @@ function validarProjetosEConfiguracoes() {
       throw new Error("O custo de cada projeto deve ser maior que zero.");
     }
 
-    if (Math.round(projeto.custo * 100) !== projeto.custo * 100) {
+    if (!/^\d+(\.\d{1,2})?$/.test(String(projeto.custo))) {
       throw new Error("Os custos devem ter no máximo duas casas decimais.");
     }
 
@@ -658,10 +658,18 @@ function reproduzir() {
       atualizarQuadro();
 
       if (indiceEtapa === roteiro.length - 1) {
-        pararRelogio();
         confirmarGeracaoPendente();
         atualizarQuadro();
         atualizarBotoes();
+
+        // Prepara a próxima geração e continua a animação
+        if (!execucaoEncerrada && prepararProximaAnimacao()) {
+          indiceEtapa = 0;
+          atualizarQuadro();
+        } else {
+          pararRelogio();
+          atualizarBotoes();
+        }
       }
     } else {
       pararRelogio();
@@ -859,15 +867,14 @@ listaProjetos.addEventListener("change", evento => {
       return;
     }
 
-    if (
-      campo === "custo" &&
-      (numero <= 0 || Math.round(numero * 100) !== numero * 100)
-    ) {
-      alert(
-        "O custo deve ser positivo e ter no máximo duas casas decimais."
-      );
-      mostrarProjetos();
-      return;
+    if (campo === "custo") {
+      if (numero <= 0 || !/^\d+(\.\d{1,2})?$/.test(valor.trim())) {
+        alert(
+          "O custo deve ser positivo e ter no máximo duas casas decimais."
+        );
+        mostrarProjetos();
+        return;
+      }
     }
 
     if (campo === "beneficio" && numero < 0) {
@@ -1009,6 +1016,12 @@ botaoReiniciar.addEventListener("click", () => {
       "Simulação reiniciada. A população e o histórico voltaram à geração 0.";
   } catch (erro) {
     mensagemValidacao.textContent = erro.message;
+  }
+});
+
+formulario.addEventListener("input", evento => {
+  if (evento.target.id !== "velocidade") {
+    invalidarSimulacaoPorEdicao();
   }
 });
 

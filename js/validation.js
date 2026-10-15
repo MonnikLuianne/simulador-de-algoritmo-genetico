@@ -31,6 +31,10 @@ export function lerConfiguracoes() {
     throw new Error("O orçamento não pode ser negativo.");
   }
 
+  if (!/^\d+(\.\d{1,2})?$/.test(configuracoes.orcamento.trim())) {
+    throw new Error("O orçamento deve ter no máximo duas casas decimais.");
+  }
+
   if (!Number.isInteger(valores.populacao) || valores.populacao < 2) {
     throw new Error("A população deve ser um inteiro maior ou igual a 2.");
   }
