@@ -34,6 +34,9 @@ let logsVisiveis = [];
 let todosLogs = [];
 let idsLogs = new Set();
 let execucaoEncerrada = false;
+// true depois de qualquer alteração em dados ou parâmetros: bloqueia a
+// execução até o usuário clicar em Reiniciar.
+let precisaReiniciar = false;
 
 function escapar(texto) {
   return String(texto).replace(/[&<>"']/g, caractere => ({
@@ -474,7 +477,7 @@ function atualizarQuadro() {
       <span class="etapa-selo">AGUARDANDO</span>
       <h3>Pronto para começar</h3>
       <p>
-        Pressione "Reproduzir animação" para acompanhar uma geração
+        Pressione "Executar" para acompanhar as gerações
         passo a passo.
       </p>`;
 
@@ -511,6 +514,14 @@ function atualizarBotoes() {
   const temRoteiro = roteiro.length > 0;
   const noInicio = indiceEtapa <= 0;
   const noFim = temRoteiro && indiceEtapa >= roteiro.length - 1;
+
+  if (precisaReiniciar) {
+    // Alterações exigem reinício: só o botão Reiniciar fica disponível.
+    [botaoExecutar, botaoPausar, botaoContinuar, botaoProximaEtapa,
+      botaoEtapaAnterior, botaoPular, botaoAvancar, botaoTodasGeracoes]
+      .forEach(botao => { if (botao) botao.disabled = true; });
+    return;
+  }
 
   botaoPausar.disabled = intervalo === null;
   botaoExecutar.disabled = intervalo !== null || execucaoEncerrada;
@@ -627,6 +638,12 @@ function avancarEtapa() {
 }
 
 function reproduzir() {
+  if (precisaReiniciar) {
+    mensagemValidacao.textContent =
+      "Dados ou parâmetros alterados. Clique em Reiniciar para aplicar as mudanças.";
+    return;
+  }
+
   if (!simulacao) {
     try {
       criarNovaSimulacao();
@@ -677,10 +694,10 @@ function reproduzir() {
     }
   }, ms);
 
-  $("status-animacao").textContent = "Reproduzindo animação";
+  $("status-animacao").textContent = "Executando";
 
   mensagemValidacao.textContent =
-    "Reprodução em andamento. Você pode parar e continuar do mesmo ponto.";
+    "Execução em andamento. Use Pausar para interromper e Executar para retomar do mesmo ponto.";
 
   atualizarBotoes();
 }
@@ -802,6 +819,7 @@ function verResultadoTodasGeracoes() {
 
 function invalidarSimulacaoPorEdicao() {
   pararRelogio();
+  precisaReiniciar = true;
 
   simulacao = null;
   configuracoesAtuais = null;
@@ -835,7 +853,7 @@ function invalidarSimulacaoPorEdicao() {
     "Simulação aguardando reinício";
 
   mensagemValidacao.textContent =
-    "Projeto alterado. Reinicie a simulação para aplicar as mudanças.";
+    "Dados ou parâmetros alterados. Clique em Reiniciar para aplicar as mudanças.";
 
   atualizarBotoes();
 }
@@ -925,10 +943,10 @@ botaoExecutar.addEventListener("click", reproduzir);
 botaoPausar.addEventListener("click", () => {
   pararRelogio();
 
-  $("status-animacao").textContent = "Animação parada";
+  $("status-animacao").textContent = "Pausado";
 
   mensagemValidacao.textContent =
-    "Animação parada. Continue para retomar do mesmo ponto.";
+    "Execução pausada. O estado foi preservado: clique em Executar para retomar do mesmo ponto.";
 
   atualizarBotoes();
 });
@@ -991,6 +1009,7 @@ botaoReiniciar.addEventListener("click", () => {
 
     configuracoesAtuais = validarProjetosEConfiguracoes();
     simulacao = criarSimulacao(projetos, configuracoesAtuais);
+    precisaReiniciar = false;
 
     roteiro = [];
     indiceEtapa = -1;

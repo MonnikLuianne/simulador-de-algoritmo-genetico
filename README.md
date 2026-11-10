@@ -235,11 +235,12 @@ Uma solução sem projetos selecionados também é válida. Nesse caso, o custo 
 
 A interface permite acompanhar e controlar a execução do algoritmo por meio dos recursos disponíveis na aplicação, incluindo:
 
-- Executar a simulação;
-- Pausar e retomar a execução;
-- Avançar uma geração por vez;
-- Reiniciar a simulação;
-- Consultar o resultado final de todas as gerações.
+- **Executar:** percorre as gerações, com animação, até o número configurado;
+- **Pausar:** interrompe preservando o estado; **Executar** (ou **Continuar**) retoma do mesmo ponto;
+- **Avançar uma geração:** produz exatamente uma nova geração e permanece pausado;
+- **Reiniciar:** limpa o histórico e restabelece a semente configurada;
+- **Ver resultado final de todas as gerações:** conclui a execução sem animação;
+- **Próxima etapa / Etapa anterior / Pular e ver resultado:** navegação pelas etapas da animação da geração atual.
 
 A execução termina quando o número de gerações configurado é atingido.
 
@@ -247,7 +248,7 @@ A opção de visualizar o resultado final de todas as gerações permite conclui
 
 Ao reiniciar, a aplicação cria uma nova população inicial, reinicia o histórico e utiliza a semente configurada.
 
-**Importante:** alterações nos projetos ou nos parâmetros exigem o reinício da simulação para que sejam aplicadas à nova execução.
+**Importante:** qualquer alteração nos projetos ou nos parâmetros bloqueia Executar e Avançar até que se clique em **Reiniciar**.
 
 ### 5.12. Animações e logs
 
@@ -436,7 +437,7 @@ Todas as soluções viáveis verificadas:
 | Etapa | Filho 1 | Filho 2 |
 |---|---|---|
 | Após cruzamento | `1111` | `0000` |
-| Após mutação (gene 0 do filho 1) | `0111` | `0000` |
+| Após mutação (1º gene, A, do filho 1) | `0111` | `0000` |
 | Após reparo | `0100` | `0000` |
 | Custo final (R$) | 3.000 | 0 |
 | Aptidão final | 5 | 0 |
@@ -449,7 +450,15 @@ Reparo do filho 1: `0111` → remove C (razão 0,0015) → `0101` → remove D (
 |---|---|
 | Mutação 0%: nenhum gene invertido | ✓ |
 | Mutação 100%: todos os genes invertidos | ✓ |
-| Torneio com candidatos 1000 (apt. 7), 0011 (apt. 11), 1100 (apt. 12) → vencedor `1100` | ✓ |
+| Mutação 0% (execução completa, semente 42): 950 filhos, nenhum gene invertido | ✓ |
+| Mutação 100% (execução completa, semente 42): os 4 genes invertidos em todos os 950 filhos, antes do reparo | ✓ |
+| Cruzamento 0% (execução completa): 0 cortes em 500 pares; os filhos copiam os pais antes da mutação | ✓ |
+| Cruzamento 100% (execução completa): cruzamento nos 500 pares; cortes observados somente após o 1º, 2º ou 3º gene | ✓ |
+| Torneio com candidatos 1000 (apt. 7), 0011 (apt. 11), 1100 (apt. 12) → vencedor `1100` (em 6 sorteios com sementes diferentes) | ✓ |
+| Empate no torneio: população 1000, 0001, 1100, 0110, 1100 (índices 1 a 5), torneio com os 5 → vence o índice 3, e não o 5, que tem a mesma aptidão 12 (8 sementes) | ✓ |
+| Empate no torneio: candidatos 0001 e 0110 (ambos com aptidão 8) → vence sempre o de menor índice (200 sementes) | ✓ |
+
+Cruzamento, mutação e reparo são registrados em linhas separadas do log.
 
 **Conclusão:** todos os valores coincidem exatamente com os esperados.
 
@@ -468,6 +477,9 @@ Reparo do filho 1: `0111` → remove C (razão 0,0015) → `0101` → remove D (
 | Melhor aptidão da população não diminui (1 elite) | ✓ |
 | Custo final dentro do orçamento | ✓ |
 | Totais compatíveis com o cromossomo | ✓ |
+| Mesma semente repetida → mesmo histórico | ✓ |
+
+A melhor solução já estava na geração 0. A aptidão média da população foi de 8,60 na geração 0 para 11,30 na geração 50.
 
 ---
 
@@ -488,6 +500,8 @@ Cinco execuções por configuração, com sementes 1, 2, 3, 4 e 5.
 
 **Média do melhor benefício final:** 12,00 — **Execuções que atingiram 12:** 5 de 5
 
+Aptidão média da população na geração 50 (sementes 1 a 5): 12,00; 11,75; 12,00; 11,30; 12,00 — média 11,81.
+
 **Taxa de mutação: 20%**
 
 | Semente | Melhor cromossomo | Melhor benefício | Atingiu ótimo (12)? |
@@ -500,7 +514,11 @@ Cinco execuções por configuração, com sementes 1, 2, 3, 4 e 5.
 
 **Média do melhor benefício final:** 12,00 — **Execuções que atingiram 12:** 5 de 5
 
+Aptidão média da população na geração 50 (sementes 1 a 5): 8,80; 9,40; 9,40; 9,80; 8,20 — média 9,12.
+
 **Interpretação:** as duas taxas produziram a mesma média (12,00) e atingiram o ótimo em todas as execuções. Isso indica que, para esta instância pequena (4 projetos, população 20), o impacto da taxa de mutação é limitado: o espaço de busca possui apenas 16 combinações possíveis, das quais 9 são viáveis, de modo que o algoritmo encontra o ótimo com facilidade independentemente da taxa escolhida. Não se pode concluir que uma taxa é sempre superior à outra — em instâncias maiores, taxas muito baixas podem deixar o algoritmo preso em ótimos locais, enquanto taxas muito altas podem desfazer boas soluções encontradas pelo cruzamento e pelo elitismo.
+
+A diferença entre as taxas aparece na população, não no melhor indivíduo: com 1% a população converge para `1100` (média 11,81 na geração 50); com 20% cada filho tem em média 0,8 gene invertido, o que mantém a população mais diversa e com aptidão média menor (9,12). O melhor resultado só não se perde porque o indivíduo de elite é preservado.
 
 ---
 
