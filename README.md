@@ -59,6 +59,10 @@ O objetivo do algoritmo é encontrar combinações de projetos com o maior benef
 - **Live Server:** execução local da aplicação durante o desenvolvimento.
 - **GitHub Pages:** publicação da aplicação na web.
 
+### Bibliotecas auxiliares
+
+**Nenhuma biblioteca externa é utilizada.** O gráfico de evolução é desenhado em SVG puro, a interface e as animações usam apenas HTML, CSS e JavaScript, e o gerador pseudoaleatório com semente (Mulberry32, em `js/random.js`) foi escrito no próprio projeto. O algoritmo genético e todos os seus operadores (inicialização, avaliação, torneio, cruzamento, mutação, reparação e elitismo) foram implementados pelos autores.
+
 O projeto é executado diretamente no navegador, sem necessidade de backend ou banco de dados. O algoritmo genético é implementado em JavaScript, sem dependência de bibliotecas externas de otimização.
 
 ## 4. Estrutura do projeto
@@ -238,6 +242,7 @@ Uma solução sem projetos selecionados também é válida. Nesse caso, o custo 
 A interface permite acompanhar e controlar a execução do algoritmo por meio dos recursos disponíveis na aplicação, incluindo:
 
 - **Executar:** percorre as gerações, com animação, até o número configurado;
+- **Velocidade da animação:** Lenta, Normal, Rápida, Muito rápida ou **Sem animação**. Com animação, cada geração é mostrada evento a evento (seleção, cruzamento, mutação, reparo, elitismo), o que leva alguns segundos por geração. Com **Sem animação**, o Executar conclui uma geração por vez rapidamente (os eventos continuam registrados no log) e Pausar continua funcionando. A velocidade nunca altera os sorteios nem os resultados;
 - **Pausar:** interrompe preservando o estado; **Executar** (ou **Continuar**) retoma do mesmo ponto;
 - **Avançar uma geração:** produz exatamente uma nova geração e permanece pausado;
 - **Reiniciar:** limpa o histórico e restabelece a semente configurada;
@@ -295,10 +300,10 @@ A aplicação inicia com quatro projetos de melhoria do campus universitário.
 
 | Projeto | Custo | Benefício |
 |---|---:|---:|
-| A — Iluminação do campus | R$ 4.000,00 | 7 |
-| B — Bicicletários | R$ 3.000,00 | 5 |
-| C — Bancos para áreas comuns | R$ 2.000,00 | 3 |
-| D — Reforma da área de convivência | R$ 5.000,00 | 8 |
+| A — Melhoria da iluminação | R$ 4.000,00 | 7 |
+| B — Instalação de bicicletários | R$ 3.000,00 | 5 |
+| C — Aquisição de bancos | R$ 2.000,00 | 3 |
+| D — Reforma de espaço de convivência | R$ 5.000,00 | 8 |
 
 O orçamento inicial é de **R$ 7.000,00**.
 
