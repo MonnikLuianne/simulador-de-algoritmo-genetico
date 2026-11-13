@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testes de validação — Algoritmo Genético</title>
+    <style>
+        body { font-family: "Segoe UI", Arial, sans-serif; margin: 0; padding: 24px 16px 48px; background: #f4f6fc; color: #202b43; line-height: 1.5; }
+        main { max-width: 900px; margin: 0 auto; }
+        h1 { margin: 0 0 4px; font-size: 1.5rem; }
+        a { color: #4652bf; }
+        #resumo { margin: 16px 0; padding: 12px 16px; border-radius: 10px; font-weight: 700; background: #e8ebf7; }
+        #resumo.ok { background: #d9f8e9; color: #17694f; }
+        #resumo.falha { background: #ffe1e4; color: #a3202f; }
+        section { margin-bottom: 14px; padding: 14px 16px; background: #fff; border: 1px solid #e1e6f0; border-radius: 12px; }
+        h2 { margin: 0 0 8px; font-size: 1.05rem; }
+        ul { margin: 0; padding-left: 0; list-style: none; font-size: 0.92rem; }
+        li { padding: 2px 0; overflow-wrap: anywhere; }
+        li::before { display: inline-block; width: 22px; font-weight: 700; }
+        li.ok::before { content: "✓"; color: #17694f; }
+        li.falha::before { content: "✗"; color: #a3202f; }
+        li.info::before { content: "•"; color: #6e7890; }
+        li.falha { color: #a3202f; font-weight: 600; }
+        table { border-collapse: collapse; margin-top: 8px; font-size: 0.9rem; }
+        th, td { padding: 4px 10px; border: 1px solid #e1e6f0; text-align: center; }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Testes de validação — Algoritmo Genético</h1>
+    <p>
+        Esta página executa os testes da seção 6 do enunciado usando as mesmas funções do simulador
+        (<code>js/evaluation.js</code>, <code>js/repair.js</code>, <code>js/geneticAlgorithm.js</code>,
+        <code>js/simulation.js</code>). Nos testes controlados, as escolhas (ponto de corte e genes mutados)
+        são fornecidas diretamente às funções por um gerador com valores fixos.
+        <a href="index.html">← Voltar ao simulador</a>
+    </p>
+    <div id="resumo">Executando…</div>
+    <div id="saida"></div>
+</main>
+
+<script type="module">
+import { avaliarSolucao } from "./js/evaluation.js";
+import { repararSolucao } from "./js/repair.js";
+import { selecionarPorTorneio, cruzamentoUmPonto, mutarCromossomo } from "./js/geneticAlgorithm.js";
+import { criarSimulacao } from "./js/simulation.js";
+import { criarGeradorAleatorio } from "./js/random.js";
+
+// ---- Dados da seção 6.1 ----
+const PROJETOS = [
+  { nome: "A - Melhoria da iluminação", custo: 4000, beneficio: 7 },
+  { nome: "B - Instalação de bicicletários", custo: 3000, beneficio: 5 },
+  { nome: "C - Aquisição de bancos", custo: 2000, beneficio: 3 },
+  { nome: "D - Reforma de espaço de convivência", custo: 5000, beneficio: 8 }
+];
+const ORCAMENTO = 7000;
+const CONFIG = { orcamento: ORCAMENTO, populacao: 20, geracoes: 50, cruzamento: 80, mutacao: 5, torneio: 2, elite: 1, semente: 42 };
+
+const genes = texto => texto.split("").map(Number);
+const texto = cromossomo => cromossomo.join("");
+
+// Gerador com valores fixos, para forçar escolhas nos testes controlados.
+const fixo = valores => { let i = 0; return () => valores[Math.min(i++, valores.length - 1)]; };
+
+// ---- Infraestrutura mínima ----
+let total = 0, falhas = 0;
+const saida = document.getElementById("saida");
+let lista = null;
+
+function secao(titulo) {
+  const s = document.createElement("section");
+  s.innerHTML = `<h2>${titulo}</h2>`;
+  lista = document.createElement("ul");
+  s.appendChild(lista);
+  saida.appendChild(s);
+  return s;
+}
+function item(classe, mensagem) {
+  const li = document.createElement("li");
+  li.className = classe;
+  li.textContent = mensagem;
+  lista.appendChild(li);
+}
+function igual(rotulo, obtido, esperado) {
+  total++;
+  const ok = JSON.stringify(obtido) === JSON.stringify(esperado);
+  if (!ok) falhas++;
+  item(ok ? "ok" : "falha", ok ? `${rotulo}: ${JSON.stringify(obtido)}` : `${rotulo}: obtido ${JSON.stringify(obtido)}, esperado ${JSON.stringify(esperado)}`);
+}
+function verdadeiro(rotulo, condicao) {
+  total++;
+  if (!condicao) falhas++;
+  item(condicao ? "ok" : "falha", rotulo);
+}
+const info = mensagem => item("info", mensagem);
+
+function executar(config) {
+  const sim = criarSimulacao(PROJETOS, config);
+  const populacoes = [sim.obterEstado().populacao];
+  const eventos = [];
+  while (!sim.obterEstado().concluida) {
+    const r = sim.avancarGeracao();
+    populacoes.push(r.populacao);
+    eventos.push(...r.eventos);
+  }
+  return { estado: sim.obterEstado(), populacoes, eventos };
+}
+
+// ================= 6.2 Avaliação =================
+secao("6.2 — Avaliação de uma solução");
+{
+  const a = avaliarSolucao(genes("1100"), PROJETOS);
+  igual("1100 → custo", a.custo, 7000);
+  igual("1100 → benefício", a.beneficio, 12);
+  igual("1100 → aptidão", a.fitness, 12);
+  igual("1100 → saldo", ORCAMENTO - a.custo, 0);
+  verdadeiro("1100 é viável (custo ≤ orçamento)", a.custo <= ORCAMENTO);
+
+  const esperadas = { "0000": [0, 0], "1000": [4000, 7], "0100": [3000, 5], "0010": [2000, 3], "0001": [5000, 8], "1100": [7000, 12], "1010": [6000, 10], "0110": [5000, 8], "0011": [7000, 11] };
+  const viaveis = {};
+  for (let m = 0; m < 16; m++) {
+    const c = m.toString(2).padStart(4, "0");
+    const av = avaliarSolucao(genes(c), PROJETOS);
+    if (av.custo <= ORCAMENTO) viaveis[c] = [av.custo, av.beneficio];
+  }
+  igual("Quantidade de soluções viáveis", Object.keys(viaveis).length, 9);
+  for (const c of Object.keys(esperadas)) igual(`${c} → [custo, benefício]`, viaveis[c], esperadas[c]);
+  const otimo = Object.keys(viaveis).reduce((x, y) => (viaveis[y][1] > viaveis[x][1] ? y : x));
+  igual("Ótimo global", otimo, "1100");
+}
+
+// ================= 6.3 Reparação =================
+secao("6.3 — Reparação de uma solução inviável");
+{
+  const antes = avaliarSolucao(genes("1111"), PROJETOS);
+  igual("1111 → [custo, benefício]", [antes.custo, antes.beneficio], [14000, 23]);
+  const r = repararSolucao(genes("1111"), PROJETOS, ORCAMENTO);
+  igual("Quantidade de remoções", r.eventos.length, 2);
+  verdadeiro("1ª remoção: projeto C (menor razão benefício/custo)", /^Remover C /.test(r.eventos[0]));
+  verdadeiro("2ª remoção: projeto D", /^Remover D /.test(r.eventos[1]));
+  const passo1 = avaliarSolucao(genes("1101"), PROJETOS);
+  igual("Após remover C: 1101 → [custo, benefício]", [passo1.custo, passo1.beneficio], [12000, 20]);
+  igual("Resultado da reparação", texto(r.cromossomo), "1100");
+  igual("1100 → [custo, benefício]", [r.avaliacao.custo, r.avaliacao.beneficio], [7000, 12]);
+}
+
+// ================= 6.4 Operadores controlados =================
+secao("6.4 — Cruzamento e mutação com escolhas controladas");
+{
+  // Corte após o 2º gene: floor(r × 3) + 1 = 2 quando r = 0,5
+  const cx = cruzamentoUmPonto(genes("1100"), genes("0011"), fixo([0.5]));
+  igual("Ponto de corte forçado", cx.pontoCorte, 2);
+  igual("Cruzamento 11|00 + 00|11 → filho 1", texto(cx.filho1), "1111");
+  igual("Cruzamento 11|00 + 00|11 → filho 2", texto(cx.filho2), "0000");
+
+  // Mutação apenas no 1º gene do filho 1: o sorteio só fica abaixo da taxa no gene A
+  const m1 = mutarCromossomo(cx.filho1, 50, fixo([0, 0.99, 0.99, 0.99]));
+  const m2 = mutarCromossomo(cx.filho2, 50, fixo([0.99]));
+  igual("Mutação forçada no 1º gene do filho 1", texto(m1.cromossomo), "0111");
+  igual("Filho 2 sem mutação", texto(m2.cromossomo), "0000");
+
+  const r1 = repararSolucao(m1.cromossomo, PROJETOS, ORCAMENTO);
+  const r2 = repararSolucao(m2.cromossomo, PROJETOS, ORCAMENTO);
+  verdadeiro("Reparação do filho 1 remove C e depois D (0111 → 0101 → 0100)", r1.eventos.length === 2 && /^Remover C /.test(r1.eventos[0]) && /^Remover D /.test(r1.eventos[1]));
+  igual("Filho 1 final → [cromossomo, custo, aptidão]", [texto(r1.cromossomo), r1.avaliacao.custo, r1.avaliacao.fitness], ["0100", 3000, 5]);
+  igual("Filho 2 final → [cromossomo, custo, aptidão]", [texto(r2.cromossomo), r2.avaliacao.custo, r2.avaliacao.fitness], ["0000", 0, 0]);
+  igual("Reparação do filho 2: nenhuma remoção", r2.eventos.length, 0);
+}
+
+secao("6.4 — Limites das taxas");
+{
+  const g = criarGeradorAleatorio(2026);
+  let zero = true, cem = true;
+  for (let t = 0; t < 2000; t++) {
+    const c = Array.from({ length: 4 + (t % 12) }, () => (g() < 0.5 ? 0 : 1));
+    if (texto(mutarCromossomo(c, 0, g).cromossomo) !== texto(c)) zero = false;
+    if (texto(mutarCromossomo(c, 100, g).cromossomo) !== texto(c.map(b => 1 - b))) cem = false;
+  }
+  verdadeiro("Mutação 0%: nenhum gene invertido em 2.000 cromossomos", zero);
+  verdadeiro("Mutação 100%: todos os genes invertidos em 2.000 cromossomos", cem);
+
+  const m0 = executar({ ...CONFIG, mutacao: 0 }).eventos.filter(e => /^Mutação/.test(e));
+  verdadeiro(`Execução com mutação 0%: ${m0.length} filhos, nenhum gene alterado`, m0.length > 0 && m0.every(e => /nenhum gene/.test(e)));
+  const m100 = executar({ ...CONFIG, mutacao: 100 }).eventos.filter(e => /^Mutação/.test(e));
+  verdadeiro(`Execução com mutação 100%: os 4 genes invertidos nos ${m100.length} filhos (antes da reparação)`, m100.length > 0 && m100.every(e => /Gene 1 .*Gene 2 .*Gene 3 .*Gene 4 /.test(e)));
+
+  const c0 = executar({ ...CONFIG, cruzamento: 0 }).eventos;
+  const sem = c0.filter(e => /^Sem cruzamento/.test(e)).length;
+  verdadeiro(`Cruzamento 0%: nenhum corte em ${sem} pares (os filhos copiam os pais antes da mutação)`, sem > 0 && !c0.some(e => /^Cruzamento no ponto/.test(e)));
+  const c100 = executar({ ...CONFIG, cruzamento: 100 }).eventos;
+  const cortes = c100.filter(e => /^Cruzamento no ponto/.test(e));
+  verdadeiro(`Cruzamento 100%: cruzamento nos ${cortes.length} pares`, cortes.length > 0 && !c100.some(e => /^Sem cruzamento/.test(e)));
+  igual("Cortes observados (entre o 1º e o penúltimo gene)", [...new Set(cortes.map(e => e.match(/ponto (\d+)/)[1]))].sort().join(", "), "1, 2, 3");
+}
+
+secao("6.4 — Seleção por torneio");
+{
+  const pop = [genes("1000"), genes("0011"), genes("1100")];
+  igual("Aptidões de 1000, 0011 e 1100", pop.map(c => avaliarSolucao(c, PROJETOS).fitness), [7, 11, 12]);
+  const vencedores = new Set();
+  for (let s = 0; s < 50; s++) vencedores.add(texto(selecionarPorTorneio(pop, PROJETOS, 3, criarGeradorAleatorio(s)).cromossomo));
+  igual("Vencedor do torneio com os três (50 sementes, várias ordens de sorteio)", [...vencedores], ["1100"]);
+
+  const empate = [genes("1000"), genes("0001"), genes("1100"), genes("0110"), genes("1100")];
+  info("População do teste de empate: índices 0 a 4 = 1000 (7), 0001 (8), 1100 (12), 0110 (8), 1100 (12)");
+  const ind = new Set();
+  for (let s = 0; s < 50; s++) ind.add(selecionarPorTorneio(empate, PROJETOS, 5, criarGeradorAleatorio(s)).indice);
+  igual("Empate entre os índices 2 e 4 (aptidão 12) → vence o menor índice", [...ind], [2]);
+  const ind2 = new Set();
+  for (let s = 0; s < 200; s++) ind2.add(selecionarPorTorneio([genes("0001"), genes("0110")], PROJETOS, 2, criarGeradorAleatorio(s)).indice);
+  igual("Empate entre 0001 e 0110 (aptidão 8) → vence o menor índice (200 sementes)", [...ind2], [0]);
+
+  // Candidatos distintos: com k = tamanho da população, todos participam;
+  // portanto o único melhor indivíduo vence sempre, em qualquer posição.
+  let distintos = true;
+  for (let posicao = 0; posicao < 8; posicao++) {
+    const populacao = Array.from({ length: 8 }, (_, i) => genes(i === posicao ? "1100" : "0010"));
+    for (let s = 0; s < 40; s++) {
+      if (selecionarPorTorneio(populacao, PROJETOS, 8, criarGeradorAleatorio(s)).indice !== posicao) distintos = false;
+    }
+  }
+  verdadeiro("Candidatos distintos: com k = população, o único melhor vence em todas as posições (320 torneios)", distintos);
+}
+
+// ================= 6.5 Execução completa =================
+secao("6.5 — Execução completa (população 20, 50 gerações, 80%, 5%, torneio 2, elite 1, semente 42)");
+{
+  const r = executar(CONFIG);
+  const melhor = r.estado.melhorAcumulado;
+  const av = avaliarSolucao(melhor.cromossomo, PROJETOS);
+  info(`Melhor solução: ${texto(melhor.cromossomo)}; custo R$ ${av.custo}; benefício ${av.beneficio}; saldo R$ ${ORCAMENTO - av.custo}; encontrada na geração ${melhor.geracao}`);
+  igual("Registros no histórico (geração 0 + 50)", r.estado.historico.length, 51);
+  verdadeiro("Custo da melhor solução ≤ R$ 7.000", av.custo <= ORCAMENTO);
+  verdadeiro("Benefício da melhor solução ≤ 12", av.beneficio <= 12);
+  verdadeiro("Totais compatíveis com o cromossomo", av.custo === melhor.custo && av.beneficio === melhor.fitness);
+  const h = r.estado.historico;
+  verdadeiro("Melhor benefício acumulado nunca diminui", h.every((x, i) => i === 0 || x.melhorAcumulado >= h[i - 1].melhorAcumulado));
+  verdadeiro("Com 1 indivíduo de elite, a melhor aptidão da população nunca diminui", h.every((x, i) => i === 0 || x.melhorFitness >= h[i - 1].melhorFitness));
+  verdadeiro("Tamanho da população constante (20) em todas as gerações", r.populacoes.every(p => p.length === 20));
+  verdadeiro("Todos os 1.020 indivíduos respeitam o orçamento", r.populacoes.every(p => p.every(c => avaliarSolucao(c, PROJETOS).custo <= ORCAMENTO)));
+  const r2 = executar(CONFIG);
+  verdadeiro("Mesma semente → mesmo histórico e mesma população final", JSON.stringify([r.estado.historico, r.estado.populacao]) === JSON.stringify([r2.estado.historico, r2.estado.populacao]));
+  info(`Aptidão média: ${h[0].mediaFitness.toFixed(2)} na geração 0 e ${h[50].mediaFitness.toFixed(2)} na geração 50`);
+}
+
+{
+  const s = secao("6.5 — Efeito da taxa de mutação (sementes 1 a 5)");
+  let html = "<table><tr><th>Mutação</th><th>Semente</th><th>Melhor cromossomo</th><th>Melhor benefício</th><th>Aptidão média na geração 50</th></tr>";
+  for (const taxa of [1, 20]) {
+    const melhores = [];
+    for (const semente of [1, 2, 3, 4, 5]) {
+      const r = executar({ ...CONFIG, mutacao: taxa, semente });
+      melhores.push(r.estado.melhorAcumulado.fitness);
+      html += `<tr><td>${taxa}%</td><td>${semente}</td><td>${texto(r.estado.melhorAcumulado.cromossomo)}</td><td>${r.estado.melhorAcumulado.fitness}</td><td>${r.estado.historico[50].mediaFitness.toFixed(2)}</td></tr>`;
+    }
+    const media = melhores.reduce((a, b) => a + b, 0) / melhores.length;
+    info(`Mutação ${taxa}%: média do melhor benefício final = ${media.toFixed(2)}; execuções que atingiram 12 = ${melhores.filter(v => v === 12).length} de 5`);
+    verdadeiro(`Mutação ${taxa}%: nenhum resultado acima de 12`, melhores.every(v => v <= 12));
+  }
+  s.insertAdjacentHTML("beforeend", html + "</table>");
+}
+
+// ================= 6.6 Limites de orçamento =================
+secao("6.6 — Limites de orçamento");
+{
+  const r0 = executar({ ...CONFIG, orcamento: 0 });
+  verdadeiro("Orçamento R$ 0: toda a população é 0000 em todas as gerações", r0.populacoes.every(p => p.every(c => texto(c) === "0000")));
+  const m = r0.estado.melhorAcumulado;
+  igual("Orçamento R$ 0: melhor → [cromossomo, custo, aptidão]", [texto(m.cromossomo), m.custo, m.fitness], ["0000", 0, 0]);
+
+  const a = avaliarSolucao(genes("1111"), PROJETOS);
+  igual("Orçamento R$ 14.000: 1111 → [custo, benefício, saldo]", [a.custo, a.beneficio, 14000 - a.custo], [14000, 23, 0]);
+  igual("Orçamento R$ 14.000: 1111 não é alterado pela reparação", texto(repararSolucao(genes("1111"), PROJETOS, 14000).cromossomo), "1111");
+}
+
+const resumo = document.getElementById("resumo");
+resumo.textContent = falhas === 0 ? `${total} de ${total} verificações passaram.` : `${falhas} de ${total} verificações falharam.`;
+resumo.className = falhas === 0 ? "ok" : "falha";
+window.resultadoDosTestes = { total, falhas };
+</script>
+</body>
+</html>

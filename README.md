@@ -67,6 +67,7 @@ O projeto é executado diretamente no navegador, sem necessidade de backend ou b
 simulador-de-algoritmo-genetico/
 │
 ├── index.html
+├── testes.html
 │
 ├── css/
 │   └── style.css
@@ -88,6 +89,7 @@ simulador-de-algoritmo-genetico/
 | Arquivo | Responsabilidade |
 |---|---|
 | `index.html` | Define a estrutura da página, os formulários, os controles e as áreas de visualização. |
+| `testes.html` | Página que executa os testes de validação da seção 6 do enunciado com as funções do simulador. |
 | `css/style.css` | Define a aparência da aplicação, os painéis, os botões, as animações e a apresentação dos resultados. |
 | `js/main.js` | Integra a interface às funções do algoritmo, gerencia as interações do usuário, apresenta os resultados e controla a animação. |
 | `js/validation.js` | Valida os projetos e os parâmetros da simulação. |
@@ -387,6 +389,8 @@ Após alterações no código, é necessário enviá-las ao GitHub e aguardar a 
 **Aplicação publicada:** https://monnikluianne.github.io/simulador-de-algoritmo-genetico/
 
 ## 9. Testes e validação
+
+Os testes desta seção podem ser refeitos abrindo a página **[`testes.html`](https://monnikluianne.github.io/simulador-de-algoritmo-genetico/testes.html)** (link "Testes de validação" no topo do simulador). Ela executa as verificações da seção 6 do enunciado com as mesmas funções do simulador e mostra o que passou ou falhou. Nos testes controlados, o ponto de corte e os genes mutados são fornecidos diretamente às funções por um gerador com valores fixos.
 
 ### 9.1 Avaliação de soluções (seção 6.2)
 

@@ -603,6 +603,7 @@ function prepararProximaAnimacao() {
 }
 
 function avancarEtapa() {
+  if (bloqueadoAteReiniciar()) return;
   pararRelogio();
 
   if (!simulacao) {
@@ -637,12 +638,17 @@ function avancarEtapa() {
   atualizarBotoes();
 }
 
+// Alterações em dados ou parâmetros exigem Reiniciar. Além de desabilitar os
+// botões (atualizarBotoes), cada ação confere esta trava antes de executar.
+function bloqueadoAteReiniciar() {
+  if (!precisaReiniciar) return false;
+  mensagemValidacao.textContent =
+    "Dados ou parâmetros alterados. Clique em Reiniciar para aplicar as mudanças.";
+  return true;
+}
+
 function reproduzir() {
-  if (precisaReiniciar) {
-    mensagemValidacao.textContent =
-      "Dados ou parâmetros alterados. Clique em Reiniciar para aplicar as mudanças.";
-    return;
-  }
+  if (bloqueadoAteReiniciar()) return;
 
   if (!simulacao) {
     try {
@@ -734,6 +740,7 @@ function criarNovaSimulacao() {
 }
 
 function pularParaResultado() {
+  if (bloqueadoAteReiniciar()) return;
   pararRelogio();
 
   if (!simulacao) {
@@ -762,6 +769,7 @@ function pularParaResultado() {
 
 // Executa todas as gerações restantes sem reproduzir a animação.
 function verResultadoTodasGeracoes() {
+  if (bloqueadoAteReiniciar()) return;
   pararRelogio();
 
   if (!simulacao) {
@@ -970,6 +978,7 @@ botaoEtapaAnterior.addEventListener("click", () => {
 botaoPular.addEventListener("click", pularParaResultado);
 
 botaoAvancar.addEventListener("click", () => {
+  if (bloqueadoAteReiniciar()) return;
   pararRelogio();
 
   if (!simulacao) {
